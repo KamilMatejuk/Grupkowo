@@ -1,27 +1,35 @@
+# external packages
 import math
 import sqlite3
+import traceback
 from pathlib import Path
 from datetime import datetime
+from bcrypt import hashpw, gensalt
 
 
-# return a path to database file
 def getDatabasePath():
+    """Plik bazy danych sqlite3
+
+    Returns:
+        str: ścieżka absolutna do pliku
+    """
     db_path = Path(__file__).absolute().parent.parent.joinpath('DB')
     db_file = db_path.joinpath('grupkowo_v1.db')
     return db_file
 
 
-# create all tables
 def initialize():
+    """Stworzenie pustych tabeli w bazie danych
+    """
     connection = sqlite3.connect(getDatabasePath())
     # user
     connection.execute('''
         CREATE TABLE IF NOT EXISTS users (
             user_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-            username TEXT NOT NULL,
+            username TEXT NOT NULL UNIQUE,
             first_name TEXT NOT NULL,
             last_name TEXT NOT NULL,
-            email TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
             password TEXT NOT NULL,
             avatar BLOB
         ) ''')
@@ -93,20 +101,29 @@ def initialize():
     connection.close()
 
 
-def insert(table, columns, args):
-    connection = sqlite3.connect(getDatabasePath())
+def insert(table: str, columns, args):
+    """Wstawienie wartości do odpowiedniej tabeli
+
+    Args:
+        table (str): nazwa tabeli
+        columns (list(str)): lista nazw kolumn w tabeli
+        args (list(str)): lista wartości odpowiadających kolumnom
+
+    Returns:
+        list: pusta lista, lub False jeżeli napotkano błąd
+    """
     query = f'''
         INSERT INTO {table} ({
         ",".join(str(c) for c in columns)
         }) VALUES ({
         ",".join(str(a) for a in args)
         })'''
-    connection.execute(query)
-    connection.commit()
-    connection.close()
+    return executeQuery(query)
 
 
 def createDummyData():
+    """Utworzenie danych testowych
+    """
     # create 9 users
     for i in range(1, 10):
         insert('users', ['username','first_name', 'last_name', 'email', 'password'], [
@@ -114,7 +131,7 @@ def createDummyData():
             f'"Name{i}"',
             f'"Surname{i}"',
             f'"user{i}gmail.com"',
-            f'"password{i}"' ])
+            f'"{hashpw(f"password{i}", gensalt())}"' ])
     # create groups
     insert('groups', ['name', 'admin_id'], ['"Super Grupa 1"', 1])
     insert('groups', ['name', 'admin_id'], ['"Super Grupa 2"', 1])
@@ -159,6 +176,40 @@ def createDummyData():
     insert('reactions', ['post_id', 'owner_id', 'reaction'], [1, 8, '"love"'])
     insert('reactions', ['message_id', 'owner_id', 'reaction'], [1, 6, '"hate"'])
         
+
+def executeQuery(query, objectKeys=[]):
+    """Wywołanie polecenia na głównej bazie danych
+
+    Args:
+        query (str): polecenie SQL
+        objectKeys (list, optional): lista kluczy, którym przypisać znalezione wartości, jeżeli otrzymany efekt ma być listą dict
+
+    Returns:
+        list: lista tuple lub dict, w zalezności od objectKeys
+    """
+    results = []
+    try:
+        connection = sqlite3.connect(getDatabasePath())
+        cursor = connection.cursor()
+        cursor.execute(query)
+        for row in cursor.fetchall():
+            if len(objectKeys) == len(row) != 0:
+                obj = {}
+                for i in range(len(objectKeys)):
+                    obj[objectKeys[i]] = row[i]
+                results.append(obj)
+            else:
+                results.append(row)
+        connection.commit()
+        connection.close()
+        return results
+    except sqlite3.Error:
+        traceback.print_exc()
+        return False
+    except:
+        traceback.print_exc()
+        return False
+    
 
 
 if __name__ == '__main__':

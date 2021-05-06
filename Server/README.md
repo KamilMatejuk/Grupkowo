@@ -4,9 +4,21 @@ $ python database.py
 ```
 ## Uruchomienie
 ```
-$ pip install fastapi
 $ python3 -m uvicorn main:app --reload
 ```
 
 ## End-Pointy
 Po uruchomieniu servera nalezy wejść w url: *http://127.0.0.1:8000/docs#/*
+
+## Wysyłanie zapytań
+* Postać requestów można sprawdzić w [docs](http://127.0.0.1:8000/docs#/)
+* Testując na [docs](*http://127.0.0.1:8000/docs#/*), próbując wysłać zapytanie do zabezpieczonego endpointa, trzeba się wcześniej zalogować (`username1`, `password1`)
+* Testując na [postmanie](https://www.postman.com/), lub wysyłając zapytania już z aplikacji, trzeba dołączyć do nagłówka `token`, otrzymany podczas logowania / rejestracji
+    * `Authorization` ->
+    * type: `OAuth 2.0` ->
+    * header prefix: `Bearer` ->
+    * Access Token: `token`
+![](../README_imgs/postman.png)
+
+## Podgląd
+Bazę danych można wygodnie podejrzeć [tutaj](https://inloop.github.io/sqlite-viewer/).
