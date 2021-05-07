@@ -27,8 +27,6 @@ def initialize():
         CREATE TABLE IF NOT EXISTS users (
             user_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
             username TEXT NOT NULL UNIQUE,
-            first_name TEXT NOT NULL,
-            last_name TEXT NOT NULL,
             email TEXT NOT NULL UNIQUE,
             password TEXT NOT NULL,
             avatar BLOB
@@ -126,11 +124,9 @@ def createDummyData():
     """
     # create 9 users
     for i in range(1, 10):
-        insert('users', ['username','first_name', 'last_name', 'email', 'password'], [
+        insert('users', ['username', 'email', 'password'], [
             f'"username{i}"',
-            f'"Name{i}"',
-            f'"Surname{i}"',
-            f'"user{i}gmail.com"',
+            f'"user{i}@gmail.com"',
             f'"{hashpw(f"password{i}", gensalt())}"' ])
     # create groups
     insert('groups', ['name', 'admin_id'], ['"Super Grupa 1"', 1])

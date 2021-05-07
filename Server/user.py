@@ -1,4 +1,5 @@
 # external packages
+import random
 from fastapi import HTTPException, status
 # internal packages
 from models import *
@@ -30,23 +31,27 @@ def register(user: RequestRegister):
         user (RequestRegister): otrzymany obiekt użytkownika z requesta
 
     Raises:
+        HTTPException: nieprawidłowy adres email
         HTTPException: nazwa użytkownika lub email istnieje już w bazie
 
     Returns:
         dict: wygenerowany token
     """
-    correct = insert('users', ['username','first_name', 'last_name', 'email', 'password'], [
+    if '@' not in user.email or '.' not in user.email or len(user.email.split('@')) < 2 or len(user.email.split('.')) < 2:
+        raise HTTPException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            detail='Incorrect email'
+        )
+    correct = insert('users', ['username', 'email', 'password'], [
         f'"{user.username}"',
-        f'"{user.first_name}"',
-        f'"{user.last_name}"',
         f'"{user.email}"',
         f'"{hashPassword(user.password)}"'])
     if isinstance(correct, bool) and not correct:
         raise HTTPException(
-            status_code=status.HTTP_406_NOT_ACCEPTABLE, 
-            detail='Username/email is already in database'
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            detail='Email is already in database'
         )
-    token = generateToken(user.username, user.password)
+    token = generateToken(user.email, user.password)
     return {
         'access_token': token,
         'token_type': 'bearer'
@@ -55,7 +60,7 @@ def register(user: RequestRegister):
 
 def getGroupsAdmin(user):
     """Pobierz liste grup, gdzie użytkownik jest adminem
-    
+
     Args:
         user (dict): aktualnie zalogowany użytkownik
 
@@ -69,7 +74,7 @@ def getGroupsAdmin(user):
     correct = executeQuery(query)
     if isinstance(correct, bool) and not correct:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail='Internal Server Error'
         )
     return {
@@ -79,7 +84,7 @@ def getGroupsAdmin(user):
 
 def getGroupsMember(user: RequestRegister):
     """Pobierz liste grup do których należy użytkownik
-    
+
     Args:
         user (dict): aktualnie zalogowany użytkownik
 
@@ -93,7 +98,7 @@ def getGroupsMember(user: RequestRegister):
     correct = executeQuery(query)
     if isinstance(correct, bool) and not correct:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail='Internal Server Error'
         )
     return {
@@ -114,16 +119,17 @@ def showProfile(user_id: int):
     Returns:
         ResponseCollegueProfile: dict z danymi użytkownika
     """
-    query = f'SELECT username, first_name, last_name, avatar FROM users WHERE user_id == {user_id}'
-    correct = executeQuery(query, objectKeys=['username', 'first_name', 'last_name', 'avatar'])
+    query = f'SELECT user_id, username, avatar FROM users WHERE user_id == {user_id}'
+    correct = executeQuery(
+        query, objectKeys=['user_id', 'username', 'avatar'])
     if isinstance(correct, bool) and not correct:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail='Internal Server Error'
         )
     if len(correct) == 0:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, 
+            status_code=status.HTTP_404_NOT_FOUND,
             detail='User not found'
         )
     return correct[0]

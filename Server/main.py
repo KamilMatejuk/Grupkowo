@@ -52,8 +52,8 @@ async def f02(form: OAuth2PasswordRequestForm = Depends()):
     tags=['login'],
     summary='Zalogowanie uzytkownika',
     response_model=ResponseToken)
-async def f1(form: OAuth2PasswordRequestForm = Depends()):
-    return login(form.username, form.password)
+async def f1(form: RequestLogin):
+    return login(form.name, form.password)
 
 
 ##############################################################
