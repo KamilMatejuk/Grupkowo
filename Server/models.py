@@ -15,17 +15,17 @@ class ReactionsEnum(str, Enum):
 ####################### request models #######################
 ##############################################################
 
+class RequestLogin(BaseModel):
+    name: str
+    password: str
+    
 class RequestRegister(BaseModel):
     username: str
-    first_name: str
-    last_name: str
     email: str
     password: str
     
 class RequestEditUser(BaseModel):
     username: Optional[str] = None
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
     email: Optional[str] = None
     password: Optional[str] = None
     avatar: Optional[str] = None
@@ -63,16 +63,12 @@ class ResponseUserGroups(BaseModel):
 class ResponseUserProfile(BaseModel):
     user_id: int
     username: str
-    first_name: str
-    last_name: str
     email: str
-    password: str
     avatar: Optional[bytes] = None
 
 class ResponseCollegueProfile(BaseModel):
+    user_id: int
     username: str
-    first_name: str
-    last_name: str
     avatar: Optional[bytes] = None
 
 class ResponseGroup(BaseModel):

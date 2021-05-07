@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">KotlinMessenger</string>
+    <string name="shared_prefs">SharedPrefsName</string>
+    <string name="saved_token_key">jwtToken</string>
 </resources>

@@ -82,8 +82,8 @@ async def getCurrentUser(token: str = Depends(oauth2_scheme)):
     """
     payload = jwt.decode(token, JWT_SECRET, algorithms=['HS256'])
     user = executeQuery(
-        f'SELECT * FROM users WHERE user_id == {payload.get("id")}',
-        objectKeys=['user_id', 'username', 'first_name', 'last_name', 'email', 'password', 'avatar'])
+        f'SELECT user_id, username, email, avatar FROM users WHERE user_id == {payload.get("id")}',
+        objectKeys=['user_id', 'username', 'email', 'avatar'])
     if len(user) == 0:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, 

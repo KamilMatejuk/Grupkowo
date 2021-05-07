@@ -1,59 +1,53 @@
 package com.example.myapplication
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.ServerConnection.UserRequests
+import com.example.myapplication.databinding.ActivityMainBinding
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
+import org.json.JSONObject
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ServerLisener {
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        FirebaseApp.initializeApp(this);
-
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
-        register_button_register.setOnClickListener {
-            performRegister()
-        }
-
-        already_have_account_text_view.setOnClickListener {
-            Log.d("MainActivity", "Try to show login activity")
-
-            // launch the login activity somehow
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-        }
+        println("Token ${Server.getToken(this)}")
+        UserRequests.getCurrentUser(1, this)
 
     }
 
-    private fun performRegister() {
-        val email = email_edittext_register.text.toString()
-        val password = password_edittext_register.text.toString()
-
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Please enter text in email/pw", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        Log.d("MainActivity", "Email is: " + email)
-        Log.d("MainActivity", "Password: $password")
-        FirebaseApp.initializeApp(this);
-
-        // Firebase Authentication to create a user with email and password
-        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener {
-                    if (!it.isSuccessful) return@addOnCompleteListener
-                    Log.d("Main", "Successfully created user with uid: ${it.result?.user?.uid}")
-                }
-                .addOnFailureListener{
-                    Log.d("Main", "Failed to create user: ${it.message}")
-                    Toast.makeText(this, "Failed to create user: ${it.message}", Toast.LENGTH_SHORT).show()
-                }
+    fun logout(view: View) {
+        Server.deleteToken(this)
+        // get back to login activity
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
+    override fun onResponseArrived(requestId: Int, error: String?, response: JSONObject?) {
+        if (requestId == 1) {
+            if (error != null) {
+                Toast.makeText(this, error, Toast.LENGTH_LONG).show()
+                Log.d(RegisterActivity.TAG, "Couldn't register user in out server: $error")
+            } else {
+                binding.id.text =       "id: ${response?.getString("user_id") ?: ""}"
+                binding.username.text = "username: ${response?.getString("username") ?: ""}"
+                binding.email.text =    "email: ${response?.getString("email") ?: ""}"
+                binding.avatar.text =   "avatar: ${response?.getString("avatar") ?: "null"}"
+            }
+        }
+    }
 }
