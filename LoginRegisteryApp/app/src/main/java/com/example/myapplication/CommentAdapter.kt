@@ -43,6 +43,7 @@ class CommentAdapter(private var usernames: List<String>, private var comments: 
         holder.commentUsername.text = usernames[position]
         holder.commentText.text = comments[position]
 
+
     }
 
 
