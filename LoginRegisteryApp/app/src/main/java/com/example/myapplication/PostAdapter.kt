@@ -9,8 +9,11 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 
 class PostAdapter(private var titles: List<String>, private var details: List<String>,
-                  private var images: List<Int>, private var comments: RecyclerView):
+                  private var images: List<Int>):
                   RecyclerView.Adapter<PostAdapter.ViewHolder>() {
+
+    // deleting recyclerview comments from constructor for now
+    //   , private var comments: RecyclerView
 
 
    inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
@@ -47,7 +50,7 @@ class PostAdapter(private var titles: List<String>, private var details: List<St
         holder.postTitle.text = titles[position]
         holder.postDetails.text = details[position]
         holder.postImage.setImageResource(images[position])
-        holder.postComments = comments
+        //holder.postComments = comments
     }
 
 
