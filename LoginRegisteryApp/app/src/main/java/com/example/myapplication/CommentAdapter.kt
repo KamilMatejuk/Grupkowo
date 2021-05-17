@@ -31,6 +31,7 @@ class CommentAdapter(private var usernames: List<String>, private var comments: 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+
         val v = LayoutInflater.from(parent.context).inflate(R.layout.sub_post, parent, false)
         return ViewHolder(v)
     }
