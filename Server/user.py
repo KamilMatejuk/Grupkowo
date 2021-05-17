@@ -62,7 +62,7 @@ def getGroupsAdmin(user):
     """Pobierz liste grup, gdzie użytkownik jest adminem
 
     Args:
-        user (dict): aktualnie zalogowany użytkownik
+        user (RequestRegister): aktualnie zalogowany użytkownik
 
     Raises:
         HTTPException: jakiś nieoczekiwany błąd - sql injection
@@ -86,7 +86,7 @@ def getGroupsMember(user: RequestRegister):
     """Pobierz liste grup do których należy użytkownik
 
     Args:
-        user (dict): aktualnie zalogowany użytkownik
+        user (RequestRegister): aktualnie zalogowany użytkownik
 
     Raises:
         HTTPException: jakiś nieoczekiwany błąd - sql injection
@@ -133,3 +133,54 @@ def showProfile(user_id: int):
             detail='User not found'
         )
     return correct[0]
+
+
+def editProfile(newUser: RequestEditUser, currUser: RequestRegister):
+    """Edytuj dane na swoim profilu
+
+    Args:
+        newUser (RequestEditUser): request z danymi do edycjy
+        currUser (RequestRegister): aktualnie zalogowany użytkownik 
+
+    Raises:
+        HTTPException: błąd wykonywania polecenia SQL
+
+    Returns:
+        dict: empty response {}
+    """
+    fields = [(name, value) for (name, value) in newUser.dict().items() if value is not None]
+    query = f'''
+        UPDATE users 
+        SET {", ".join(f'{f[0]} = "{f[1]}"' for f in fields)}
+        WHERE user_id == {currUser.get("user_id")}
+        '''
+    correct = executeQuery(query)
+    if isinstance(correct, bool) and not correct:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail='Internal Server Error'
+        )
+    return {}
+
+
+def deleteProfile(user: RequestRegister):
+    """Usuń swój profil
+
+    Args:
+        user (RequestRegister): aktualnie zalogowany użytkownik 
+
+    Raises:
+        HTTPException: błąd wykonywania polecenia SQL
+
+    Returns:
+        dict: empty response {}
+    """
+    query = f'DELETE FROM users WHERE user_id == {user.get("user_id")}'
+    correct = executeQuery(query)
+    if isinstance(correct, bool) and not correct:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail='Internal Server Error'
+        )
+    return {}
+

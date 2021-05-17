@@ -1,14 +1,14 @@
 # external packages
-from fastapi import FastAPI, Depends
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi import FastAPI, Depends, status
+from fastapi.security import OAuth2PasswordRequestForm
 # internal packages
 from models import *
 from auth import getCurrentUser
 from comment import getComments
-from group import getGroup, getUsers
+from group import deleteGroup, getGroup, getUsers, createGroup, deleteGroup, addUser, deleteUser
 from post import getPosts, getReactions as getReactionsPost
 from chat import getChats, getReactions as getReactionsChat
-from user import login, register, getGroupsAdmin, getGroupsMember, showProfile
+from user import login, register, getGroupsAdmin, getGroupsMember, showProfile, editProfile, deleteProfile
 
 
 ##############################################################
@@ -20,6 +20,10 @@ app = FastAPI(
     description='Nowa lepsza wersja facebooka',
     version='0.69.420'
 )
+
+successfulResponse = {
+    'successfull': True
+}
 
 
 ##############################################################
@@ -82,17 +86,19 @@ async def f3(user = Depends(getCurrentUser)):
 @app.put(
     '/user/me/',
     tags=['aktualny użytkownik'],
-    summary='Edycja profilu')
-async def f4(user: RequestEditUser):
-    return {}
+    summary='Edycja profilu',
+    status_code=status.HTTP_200_OK)
+async def f4(newUser: RequestEditUser, currUser = Depends(getCurrentUser)):
+    return editProfile(newUser, currUser)
 
 
 @app.delete(
     '/user/me/',
     tags=['aktualny użytkownik'],
-    summary='Usunięcie profilu')
-async def f5():
-    return {}
+    summary='Usunięcie profilu',
+    status_code=status.HTTP_200_OK)
+async def f5(user = Depends(getCurrentUser)):
+    return deleteProfile(user)
 
 
 # /user/groups-user/
@@ -118,9 +124,10 @@ async def f7(user = Depends(getCurrentUser)):
 @app.post(
     '/user/groups-admin/',
     tags=['aktualny użytkownik'],
-    summary='Utworzenie nowej grupy')
-async def f8(group: RequestCreateGroup):
-    return {}
+    summary='Utworzenie nowej grupy',
+    status_code=status.HTTP_200_OK)
+async def f8(group: RequestCreateGroup, user = Depends(getCurrentUser)):
+    return createGroup(group, user)
 
 
 # /user/{user_id}
@@ -150,9 +157,10 @@ async def f10(group_id: int):
 @app.delete(
     '/group/{group_id}/',
     tags=['grupa'],
-    summary='Usunięcie grupy')
-async def f11(group_id: int):
-    return {}
+    summary='Usunięcie grupy',
+    status_code=status.HTTP_200_OK)
+async def f11(group_id: int, user = Depends(getCurrentUser)):
+    return deleteGroup(group_id, user)
 
 
 # /group/{group_id}/users/
@@ -168,17 +176,19 @@ async def f12(group_id: int, user = Depends(getCurrentUser)):
 @app.post(
     '/group/{group_id}/users/',
     tags=['grupa'],
-    summary='Dodanie użytkownika do grupy')
-async def f13(group_id: int, user: RequestAddUser):
-    return {}
+    summary='Dodanie użytkownika do grupy',
+    status_code=status.HTTP_200_OK)
+async def f13(group_id: int, user: RequestAddUser, currUser = Depends(getCurrentUser)):
+    return addUser(group_id, user, currUser)
 
 
 @app.delete(
-    '/group/{group_id}/users/{user_id}',
+    '/group/{group_id}/users/{user_id}/',
     tags=['grupa'],
-    summary='Usuniecie użytkownika z grupy')
-async def f14(group_id: int):
-    return {}
+    summary='Usuniecie użytkownika z grupy',
+    status_code=status.HTTP_200_OK)
+async def f14(group_id: int, user_id: int, user = Depends(getCurrentUser)):
+    return deleteUser(group_id, user_id, user)
 
 
 ##############################################################
@@ -198,8 +208,9 @@ async def f15(group_id: int, user = Depends(getCurrentUser)):
 @app.post(
     '/group/{group_id}/posts/',
     tags=['post'],
-    summary='Dodanie posta w grupie')
-async def f16(group_id: int, post: RequestCreatePost):
+    summary='Dodanie posta w grupie',
+    status_code=status.HTTP_200_OK)
+async def f16(group_id: int, post: RequestCreatePost, user = Depends(getCurrentUser)):
     return {}
 
 
@@ -218,16 +229,18 @@ async def f17(group_id: int, timestamp_start: str, timestamp_end: str, user = De
 @app.put(
     '/group/{group_id}/posts/{post_id}/',
     tags=['post'],
-    summary='Edycja posta')
-async def f18(group_id: int, post_id: int, post: RequestCreatePost):
+    summary='Edycja posta',
+    status_code=status.HTTP_200_OK)
+async def f18(group_id: int, post_id: int, post: RequestCreatePost, user = Depends(getCurrentUser)):
     return {}
 
 
 @app.delete(
     '/group/{group_id}/posts/{post_id}/',
     tags=['post'],
-    summary='Usunięcie posta')
-async def f19(group_id: int, post_id: int):
+    summary='Usunięcie posta',
+    status_code=status.HTTP_200_OK)
+async def f19(group_id: int, post_id: int, user = Depends(getCurrentUser)):
     return {}
 
 
@@ -244,16 +257,18 @@ async def f20(group_id: int, post_id: int, user = Depends(getCurrentUser)):
 @app.post(
     '/group/{group_id}/posts/{post_id}/reactions/',
     tags=['post'],
-    summary='Dodanie reakcji do posta')
-async def f21(group_id: int, post_id: int, reaction: RequestReaction):
+    summary='Dodanie reakcji do posta',
+    status_code=status.HTTP_200_OK)
+async def f21(group_id: int, post_id: int, reaction: RequestReaction, user = Depends(getCurrentUser)):
     return {}
 
 
 @app.delete(
     '/group/{group_id}/posts/{post_id}/reactions/',
     tags=['post'],
-    summary='Usunięcie reakcji do posta')
-async def f22(group_id: int, post_id: int):
+    summary='Usunięcie reakcji do posta',
+    status_code=status.HTTP_200_OK)
+async def f22(group_id: int, post_id: int, user = Depends(getCurrentUser)):
     return {}
 
 
@@ -274,8 +289,9 @@ async def f23(group_id: int, post_id: int, user = Depends(getCurrentUser)):
 @app.post(
     '/group/{group_id}/posts/{post_id}/comments/',
     tags=['komentarz'],
-    summary='Dodanie komentarza do posta')
-async def f24(group_id: int, post_id: int, comment: RequestCreateComment):
+    summary='Dodanie komentarza do posta',
+    status_code=status.HTTP_200_OK)
+async def f24(group_id: int, post_id: int, comment: RequestCreateComment, user = Depends(getCurrentUser)):
     return {}
 
 
@@ -283,16 +299,18 @@ async def f24(group_id: int, post_id: int, comment: RequestCreateComment):
 @app.put(
     '/group/{group_id}/posts/{post_id}/comments/{comment_id}/',
     tags=['komentarz'],
-    summary='Edycja komentarza pod postem')
-async def f25(group_id: int, post_id: int, comment_id: int, comment: RequestCreateComment):
+    summary='Edycja komentarza pod postem',
+    status_code=status.HTTP_200_OK)
+async def f25(group_id: int, post_id: int, comment_id: int, comment: RequestCreateComment, user = Depends(getCurrentUser)):
     return {}
 
 
 @app.delete(
     '/group/{group_id}/posts/{post_id}/comments/{comment_id}/',
     tags=['komentarz'],
-    summary='Usunięcie komentarza pod postem')
-async def f26(group_id: int, post_id: int, comment_id: int):
+    summary='Usunięcie komentarza pod postem',
+    status_code=status.HTTP_200_OK)
+async def f26(group_id: int, post_id: int, comment_id: int, user = Depends(getCurrentUser)):
     return {}
 
 
@@ -313,8 +331,9 @@ async def f27(group_id: int, user = Depends(getCurrentUser)):
 @app.post(
     '/group/{group_id}/chats/',
     tags=['chat'],
-    summary='Wysłanie wiadomości')
-async def f28(group_id: int, message: RequestCreateMessage):
+    summary='Wysłanie wiadomości',
+    status_code=status.HTTP_200_OK)
+async def f28(group_id: int, message: RequestCreateMessage, user = Depends(getCurrentUser)):
     return {}
 
 
@@ -342,15 +361,17 @@ async def f30(group_id: int, message_id: int, user = Depends(getCurrentUser)):
 @app.post(
     '/group/{group_id}/chats/{message_id}/reactions/',
     tags=['chat'],
-    summary='Zareagowanie na wiadomość')
-async def f31(group_id: int, message_id: int, reaction: RequestReaction):
+    summary='Zareagowanie na wiadomość',
+    status_code=status.HTTP_200_OK)
+async def f31(group_id: int, message_id: int, reaction: RequestReaction, user = Depends(getCurrentUser)):
     return {}
 
 
 @app.delete(
     '/group/{group_id}/chats/{message_id}/reactions/',
     tags=['chat'],
-    summary='Usunięcie reakcji na wiadomość')
-async def f32(group_id: int, message_id: int):
+    summary='Usunięcie reakcji na wiadomość',
+    status_code=status.HTTP_200_OK)
+async def f32(group_id: int, message_id: int, user = Depends(getCurrentUser)):
     return {}
 
