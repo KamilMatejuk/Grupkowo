@@ -48,6 +48,12 @@ class RegisterActivity : AppCompatActivity(), ServerLisener {
             startActivity(intent)
             finish()
         }
+
+        testButton.setOnClickListener {
+            val intent = Intent(this, WallActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 
     private fun performRegister() {

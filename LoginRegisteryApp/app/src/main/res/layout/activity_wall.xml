@@ -35,6 +35,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Display2" />
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/postsList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scrollbars="vertical" />
