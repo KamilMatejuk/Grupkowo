@@ -70,15 +70,15 @@ def getGroupsAdmin(user):
     Returns:
         ResponseUserGroups: lista grup
     """
-    query = f'SELECT group_id FROM groups WHERE admin_id == {user.get("user_id")}'
-    correct = executeQuery(query)
+    query = f'SELECT group_id, name, image FROM groups WHERE admin_id == {user.get("user_id")}'
+    correct = executeQuery(query, objectKeys=['group_id', 'name', 'image'])
     if isinstance(correct, bool) and not correct:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail='Internal Server Error'
         )
     return {
-        'groups': [id[0] for id in correct]
+        'groups': correct
     }
 
 
@@ -94,15 +94,19 @@ def getGroupsMember(user: RequestRegister):
     Returns:
         ResponseUserGroups: lista grup
     """
-    query = f'SELECT group_id FROM user_group WHERE user_id == {user.get("user_id")}'
-    correct = executeQuery(query)
+    query = f'''
+        SELECT user_group.group_id, groups.name, groups.image
+        FROM user_group JOIN groups ON user_group.group_id = groups.group_id
+        WHERE user_group.user_id == {user.get("user_id")}
+        '''
+    correct = executeQuery(query, objectKeys=['group_id', 'name', 'image'])
     if isinstance(correct, bool) and not correct:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail='Internal Server Error'
         )
     return {
-        'groups': [id[0] for id in correct]
+        'groups': correct
     }
 
 

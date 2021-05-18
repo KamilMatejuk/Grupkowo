@@ -23,8 +23,12 @@ def getComments(group_id: int, post_id: int, user):
         ResponseComments: lista z komentarzami
     """
     checkGroupAccess(user, group_id)
-    query = f'SELECT comment_id, author_id, created, text FROM comments WHERE post_id == {post_id}'
-    correct = executeQuery(query, objectKeys=['comment_id', 'author_id', 'created', 'text'])
+    query = f'''
+        SELECT comments.comment_id, comments.created, comments.text, comments.author_id, users.username 
+        FROM comments JOIN users ON comments.author_id = users.user_id
+        WHERE post_id == {post_id}
+        '''
+    correct = executeQuery(query, objectKeys=['comment_id', 'created', 'text', 'author_id', 'author_username'])
     if isinstance(correct, bool) and not correct:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

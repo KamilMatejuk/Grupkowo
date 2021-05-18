@@ -3,13 +3,44 @@ from pydantic import BaseModel
 from typing import Optional, List
 from enum import Enum
 
+##############################################################
+########################## objects ###########################
+##############################################################
 
-class ReactionsEnum(str, Enum):
-    like = 'like'
-    love = 'love'
-    hate = 'hate'
-    fuck_you = 'fuck you'
+class Group(BaseModel):
+    group_id: int
+    name: str
+    image: Optional[str] = None
 
+class User(BaseModel):
+    user_id: int
+    username: str
+    avatar: Optional[bytes] = None
+
+class Post(BaseModel):
+    post_id: int
+    created: int
+    text: str
+    author_id: int
+    author_username: str
+    likes: int
+    author_liked: bool
+
+class Comment(BaseModel):
+    comment_id: int
+    created: int
+    text: str
+    author_id: int
+    author_username: str
+
+class Message(BaseModel):
+    message_id: int
+    created: int
+    text: str
+    author_id: int
+    author_username: str
+    likes: int
+    author_liked: bool
 
 ##############################################################
 ####################### request models #######################
@@ -40,9 +71,6 @@ class RequestAddUser(BaseModel):
 class RequestCreatePost(BaseModel):
     text: str
 
-class RequestReaction(BaseModel):
-    reaction: ReactionsEnum
-
 class RequestCreateComment(BaseModel):
     text: str
 
@@ -58,7 +86,7 @@ class ResponseToken(BaseModel):
     token_type: str
 
 class ResponseUserGroups(BaseModel):
-    groups: list
+    groups: List[Group]
 
 class ResponseUserProfile(BaseModel):
     user_id: int
@@ -77,38 +105,13 @@ class ResponseGroup(BaseModel):
     image: Optional[bytes] = None
 
 class ResponseGroupUsers(BaseModel):
-    users: list
-
-class Post(BaseModel):
-    post_id: int
-    author_id: int
-    created: int
-    text: str
+    users: List[User]
 
 class ResponsePosts(BaseModel):
     posts: List[Post]
 
-class Reaction(BaseModel):
-    user_id: int
-    reaction: ReactionsEnum
-
-class ResponseReactions(BaseModel):
-    reactions: List[Reaction]
-
-class Comment(BaseModel):
-    comment_id: int
-    author_id: int
-    created: int
-    text: str
-
 class ResponseComments(BaseModel):
     comments: List[Comment]
-
-class Message(BaseModel):
-    message_id: int
-    author_id: int
-    created: int
-    text: str
 
 class ResponseMessages(BaseModel):
     messages: List[Message]

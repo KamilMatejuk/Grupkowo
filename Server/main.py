@@ -6,10 +6,12 @@ from models import *
 from auth import getCurrentUser
 from comment import getComments, addComment, editComment, deleteComment
 from group import deleteGroup, getGroup, getUsers, createGroup, deleteGroup, addUser, deleteUser
-from post import getPosts, getReactions as getReactionsPost, createPost, editPost, deletePost, addReaction as addReactionPost, deleteReaction as deleteReactionPost
-from chat import getMessages, getReactions as getReactionsChat, addMessage, addReaction as addReactionMessage, deleteReaction as deleteReactionMessage
+from post import getPosts, createPost, editPost, deletePost, addReaction as addReactionPost, deleteReaction as deleteReactionPost
+from chat import getMessages, addMessage, addReaction as addReactionMessage, deleteReaction as deleteReactionMessage
 from user import login, register, getGroupsAdmin, getGroupsMember, showProfile, editProfile, deleteProfile
 
+
+# TODO: poprawa requestów GET, tak żeby zwracały wszystko od razu
 
 ##############################################################
 ################ utworzenie obiektu aplikacji ################
@@ -244,23 +246,13 @@ async def f19(group_id: int, post_id: int, user = Depends(getCurrentUser)):
     return deletePost(group_id, post_id, user)
 
 
-# /group/{group_id}/posts/{post_id}/reactions/
-@app.get(
-    '/group/{group_id}/posts/{post_id}/reactions/',
-    tags=['post'],
-    summary='Pobranie reakcji do posta',
-    response_model=ResponseReactions)
-async def f20(group_id: int, post_id: int, user = Depends(getCurrentUser)):
-    return getReactionsPost(group_id, post_id, user)
-
-
 @app.post(
     '/group/{group_id}/posts/{post_id}/reactions/',
     tags=['post'],
     summary='Dodanie reakcji do posta',
     status_code=status.HTTP_200_OK)
-async def f21(group_id: int, post_id: int, reaction: RequestReaction, user = Depends(getCurrentUser)):
-    return addReactionPost(group_id, post_id, reaction, user)
+async def f21(group_id: int, post_id: int, user = Depends(getCurrentUser)):
+    return addReactionPost(group_id, post_id, user)
 
 
 @app.delete(
@@ -348,23 +340,13 @@ async def f29(group_id: int, timestamp_start: str, timestamp_end: str, user = De
     return getMessages(group_id, user, start=timestamp_start, end=timestamp_end)
 
 
-# /group/{group_id}/chats/{message_id}/reactions/
-@app.get(
-    '/group/{group_id}/chats/{message_id}/reactions/',
-    tags=['chat'],
-    summary='Pobranie reakcji do danej wiadomości',
-    response_model=ResponseReactions)
-async def f30(group_id: int, message_id: int, user = Depends(getCurrentUser)):
-    return getReactionsChat(group_id, message_id, user)
-
-
 @app.post(
     '/group/{group_id}/chats/{message_id}/reactions/',
     tags=['chat'],
     summary='Zareagowanie na wiadomość',
     status_code=status.HTTP_200_OK)
-async def f31(group_id: int, message_id: int, reaction: RequestReaction, user = Depends(getCurrentUser)):
-    return addReactionMessage(group_id, message_id, reaction, user)
+async def f31(group_id: int, message_id: int, user = Depends(getCurrentUser)):
+    return addReactionMessage(group_id, message_id, user)
 
 
 @app.delete(

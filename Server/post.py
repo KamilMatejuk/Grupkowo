@@ -1,6 +1,7 @@
 # external packages
 import math
 from datetime import datetime
+from collections import Counter
 from fastapi import HTTPException, status
 # internal packages
 from models import *
@@ -24,8 +25,12 @@ def getPosts(group_id: int, user: RequestRegister, start=None, end=None):
         ResponsePosts: lista z danymi o postach
     """
     checkGroupAccess(user, group_id)
-    
-    query = f'SELECT post_id, author_id, created, text FROM posts WHERE group_id == {group_id}'
+    # post data
+    query = f'''
+        SELECT posts.post_id, posts.created, posts.text, posts.author_id, users.username
+        FROM posts INNER JOIN users ON posts.author_id = users.user_id
+        WHERE group_id == {group_id}
+        '''
     if start is not None and end is not None:
         start_date = datetime.strptime(start, '%d%m%Y')
         start_seconds = math.floor((start_date - datetime(1970, 1, 1)).total_seconds())
@@ -33,43 +38,39 @@ def getPosts(group_id: int, user: RequestRegister, start=None, end=None):
         end_seconds = math.floor((end_date - datetime(1970, 1, 1)).total_seconds())
         start, end = min(start_seconds, end_seconds), max(start_seconds, end_seconds)
         query += f' AND created > {start} AND created < {end}'
-        
-    correct = executeQuery(query, objectKeys=['post_id', 'author_id', 'created', 'text'])
+    correct = executeQuery(query, objectKeys=['post_id', 'created', 'text', 'author_id', 'author_username'])
     if isinstance(correct, bool) and not correct:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail='Internal Server Error'
         )
+    
+    # number of likes
+    query = f'SELECT post_id, COUNT(reaction) FROM reactions GROUP BY post_id'
+    correct2 = executeQuery(query, objectKeys=['post_id', 'count'])
+    if isinstance(correct2, bool) and not correct2:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail='Internal Server Error'
+        )
+    for c in correct:
+        likes = [int(i.get('count')) for i in correct2 if i.get('post_id') == c.get('post_id')] + [0]
+        c['likes'] = likes[0]
+    
+    # if logged in user liked
+    query = f'SELECT post_id, owner_id FROM reactions WHERE owner_id == {user.get("user_id")}'
+    correct3 = executeQuery(query, objectKeys=['post_id', 'owner'])
+    if isinstance(correct3, bool) and not correct3:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail='Internal Server Error'
+        )
+    for c in correct:
+        liked = [True for i in correct3 if i.get('post_id') == c.get('post_id')] + [False]
+        c['author_liked'] = liked[0]
+        
     return {
         'posts': correct[:25]
-    }
-
-
-def getReactions(group_id: int, post_id: int, user: RequestRegister):
-    """Pobierz reakcje do danego posta wraz z autorami
-
-    Args:
-        group_id (int): numer id grupy
-        post_id (int): numer id posta
-        user  (dict): aktualnie zalogowany użytkownik (musi należeć do grupy)
-
-    Raises:
-        HTTPException: jakiś nieoczekiwany błąd - sql injection
-
-    Returns:
-        ResponseReactions: lista z reakcjami
-    """
-    checkGroupAccess(user, group_id)
-    
-    query = f'SELECT owner_id, reaction FROM reactions WHERE post_id == {post_id}'
-    correct = executeQuery(query, objectKeys=['user_id', 'reaction'])
-    if isinstance(correct, bool) and not correct:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail='Internal Server Error'
-        )
-    return {
-        'reactions': correct
     }
 
 
@@ -191,13 +192,12 @@ def deletePost(group_id: int, post_id: int, user: RequestRegister):
     return {}
 
 
-def addReaction(group_id: int, post_id: int, reaction: RequestReaction, user: RequestRegister):
+def addReaction(group_id: int, post_id: int, user: RequestRegister):
     """Dodaj reakcję na post w danej grupie
 
     Args:
         group_id (int): numer id grupy
         post_id (int): numer id posta
-        reaction (RequestReaction): reakcja
         user  (RequestRegister): aktualnie zalogowany użytkownik (musi należeć do grupy)
 
     Raises:
@@ -209,35 +209,26 @@ def addReaction(group_id: int, post_id: int, reaction: RequestReaction, user: Re
     """
     checkGroupAccess(user, group_id)
     
-    query = f'SELECT reaction FROM reactions WHERE post_id == {post_id} AND owner_id == {user.get("user_id")}'
-    correct = executeQuery(query, objectKeys=['reaction'])
+    query = f'SELECT * FROM reactions WHERE post_id == {post_id} AND owner_id == {user.get("user_id")}'
+    correct = executeQuery(query)
     if isinstance(correct, bool) and not correct or len(correct) < 0:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail='Internal Server Error'
         )
-    
     # not yet reacted
     if len(correct) == 0:        
         correct = insert('reactions', ['post_id', 'owner_id', 'reaction'], [
             f'{post_id}',
             f'{user.get("user_id")}',
-            f'"{reaction.reaction}"'
+            '"like"'
         ])
-    # already reacted with different reaction
-    elif correct[0].get("reaction") != reaction.reaction:
-        query = f'''
-            UPDATE reactions 
-            SET reaction = "{reaction.reaction}"
-            WHERE post_id == {post_id} AND owner_id == {user.get("user_id")}
-            '''
-        
-    correct = executeQuery(query)
-    if isinstance(correct, bool) and not correct:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail='Internal Server Error'
-        )
+        correct = executeQuery(query)
+        if isinstance(correct, bool) and not correct:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail='Internal Server Error'
+            )
     return {}
 
 

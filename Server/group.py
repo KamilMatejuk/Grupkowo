@@ -47,9 +47,21 @@ def getUsers(group_id: int, user: RequestRegister):
 
     Returns:
         ResponseGroup: dict z danymi użytkownika
-    """    
+    """
+    checkGroupAccess(user, group_id)
+    query = f'''
+        SELECT user_group.user_id, users.username, users.avatar
+        FROM user_group JOIN users ON user_group.user_id = users.user_id
+        WHERE user_group.group_id == {group_id}
+        '''
+    correct = executeQuery(query, objectKeys=['user_id', 'username', 'avatar'])
+    if isinstance(correct, bool) and not correct:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail='Internal Server Error'
+        )
     return {
-        'users': checkGroupAccess(user, group_id),
+        'users': correct
     }
 
 
