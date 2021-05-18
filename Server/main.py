@@ -6,7 +6,7 @@ from models import *
 from auth import getCurrentUser
 from comment import getComments
 from group import deleteGroup, getGroup, getUsers, createGroup, deleteGroup, addUser, deleteUser
-from post import getPosts, getReactions as getReactionsPost
+from post import getPosts, getReactions as getReactionsPost, createPost, editPost, deletePost, addReaction, deleteReaction
 from chat import getChats, getReactions as getReactionsChat
 from user import login, register, getGroupsAdmin, getGroupsMember, showProfile, editProfile, deleteProfile
 
@@ -211,7 +211,7 @@ async def f15(group_id: int, user = Depends(getCurrentUser)):
     summary='Dodanie posta w grupie',
     status_code=status.HTTP_200_OK)
 async def f16(group_id: int, post: RequestCreatePost, user = Depends(getCurrentUser)):
-    return {}
+    return createPost(group_id, post, user)
 
 
 # /group/{group_id}/posts/{timestamp_start}/{timestamp_end}/
@@ -231,8 +231,8 @@ async def f17(group_id: int, timestamp_start: str, timestamp_end: str, user = De
     tags=['post'],
     summary='Edycja posta',
     status_code=status.HTTP_200_OK)
-async def f18(group_id: int, post_id: int, post: RequestCreatePost, user = Depends(getCurrentUser)):
-    return {}
+async def f18(group_id: int, post_id: int, newPost: RequestCreatePost, user = Depends(getCurrentUser)):
+    return editPost(group_id, post_id, newPost, user)
 
 
 @app.delete(
@@ -241,7 +241,7 @@ async def f18(group_id: int, post_id: int, post: RequestCreatePost, user = Depen
     summary='Usunięcie posta',
     status_code=status.HTTP_200_OK)
 async def f19(group_id: int, post_id: int, user = Depends(getCurrentUser)):
-    return {}
+    return deletePost(group_id, post_id, user)
 
 
 # /group/{group_id}/posts/{post_id}/reactions/
@@ -260,7 +260,7 @@ async def f20(group_id: int, post_id: int, user = Depends(getCurrentUser)):
     summary='Dodanie reakcji do posta',
     status_code=status.HTTP_200_OK)
 async def f21(group_id: int, post_id: int, reaction: RequestReaction, user = Depends(getCurrentUser)):
-    return {}
+    return addReaction(group_id, post_id, reaction, user)
 
 
 @app.delete(
@@ -269,7 +269,7 @@ async def f21(group_id: int, post_id: int, reaction: RequestReaction, user = Dep
     summary='Usunięcie reakcji do posta',
     status_code=status.HTTP_200_OK)
 async def f22(group_id: int, post_id: int, user = Depends(getCurrentUser)):
-    return {}
+    return deleteReaction(group_id, post_id, user)
 
 
 ##############################################################
