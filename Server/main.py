@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 # internal packages
 from models import *
 from auth import getCurrentUser
-from comment import getComments
+from comment import getComments, addComment, editComment, deleteComment
 from group import deleteGroup, getGroup, getUsers, createGroup, deleteGroup, addUser, deleteUser
 from post import getPosts, getReactions as getReactionsPost, createPost, editPost, deletePost, addReaction, deleteReaction
 from chat import getChats, getReactions as getReactionsChat
@@ -292,7 +292,7 @@ async def f23(group_id: int, post_id: int, user = Depends(getCurrentUser)):
     summary='Dodanie komentarza do posta',
     status_code=status.HTTP_200_OK)
 async def f24(group_id: int, post_id: int, comment: RequestCreateComment, user = Depends(getCurrentUser)):
-    return {}
+    return addComment(group_id, post_id, comment, user)
 
 
 # /group/{group_id}/posts/{post_id}/comments/{comment_id}/
@@ -301,8 +301,8 @@ async def f24(group_id: int, post_id: int, comment: RequestCreateComment, user =
     tags=['komentarz'],
     summary='Edycja komentarza pod postem',
     status_code=status.HTTP_200_OK)
-async def f25(group_id: int, post_id: int, comment_id: int, comment: RequestCreateComment, user = Depends(getCurrentUser)):
-    return {}
+async def f25(group_id: int, post_id: int, comment_id: int, newComment: RequestCreateComment, user = Depends(getCurrentUser)):
+    return editComment(group_id, post_id, comment_id, newComment, user)
 
 
 @app.delete(
@@ -311,7 +311,7 @@ async def f25(group_id: int, post_id: int, comment_id: int, comment: RequestCrea
     summary='Usunięcie komentarza pod postem',
     status_code=status.HTTP_200_OK)
 async def f26(group_id: int, post_id: int, comment_id: int, user = Depends(getCurrentUser)):
-    return {}
+    return deleteComment(group_id, post_id, comment_id, user)
 
 
 ##############################################################
