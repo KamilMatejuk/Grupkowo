@@ -122,6 +122,6 @@ def checkGroupAccess(user, group_id):
     if user.get("user_id") not in [id[0] for id in correct1] + [id[0] for id in correct2]:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='Only admins and members of the group can see other members'
+            detail='User doesn\'t belong to the group'
         )
     return [id[0] for id in correct2]

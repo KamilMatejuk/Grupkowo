@@ -45,24 +45,12 @@ def addComment(group_id: int, post_id: int, comment: RequestCreateComment, user:
 
     Raises:
         HTTPException: błąd wykonywania polecenia SQL
-        HTTPException: próba dodania komentarza w grupie do której się nie należy
-        HTTPException: błąd wykonywania polecenia SQL
 
     Returns:
         dict: empty response {}
     """
-    query = f'SELECT * FROM user_group WHERE group_id == {group_id} AND user_id == {user.get("user_id")}'
-    correct = executeQuery(query)
-    if isinstance(correct, bool) and not correct or len(correct) < 0:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail='Internal Server Error'
-        )
-    if len(correct) == 0:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='User doesn\'t belong to this group'
-        )
+    checkGroupAccess(user, group_id)
+    
     correct = insert('comments', ['post_id', 'author_id', 'created', 'text'], [
         f'{post_id}',
         f'{user.get("user_id")}',
@@ -89,26 +77,13 @@ def editComment(group_id: int, post_id: int, comment_id: int, comment: RequestCr
 
     Raises:
         HTTPException: błąd wykonywania polecenia SQL
-        HTTPException: próba edycji komentarza w grupie do której się nie należy
-        HTTPException: błąd wykonywania polecenia SQL
         HTTPException: próba edycji nie swojego komentarza
         HTTPException: błąd wykonywania polecenia SQL
         
     Returns:
         dict: empty response {}
     """
-    query = f'SELECT * FROM user_group WHERE group_id == {group_id} AND user_id == {user.get("user_id")}'
-    correct = executeQuery(query)
-    if isinstance(correct, bool) and not correct or len(correct) < 0:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail='Internal Server Error'
-        )
-    if len(correct) == 0:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='User doesn\'t belong to this group'
-        )
+    checkGroupAccess(user, group_id)
         
     query = f'SELECT * FROM comments WHERE comment_id == {comment_id} AND author_id == {user.get("user_id")}'
     correct = executeQuery(query)
@@ -149,27 +124,14 @@ def deleteComment(group_id: int, post_id: int, comment_id: int, user: RequestReg
 
     Raises:
         HTTPException: błąd wykonywania polecenia SQL
-        HTTPException: próba usunięcia koemntarza w grupie do której się nie należy
-        HTTPException: błąd wykonywania polecenia SQL
         HTTPException: próba usunięcia nie swojego komentarza
         HTTPException: błąd wykonywania polecenia SQL
         
     Returns:
         dict: empty response {}
     """
-    query = f'SELECT * FROM user_group WHERE group_id == {group_id} AND user_id == {user.get("user_id")}'
-    correct = executeQuery(query)
-    if isinstance(correct, bool) and not correct or len(correct) < 0:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail='Internal Server Error'
-        )
-    if len(correct) == 0:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='User doesn\'t belong to this group'
-        )
-        
+    checkGroupAccess(user, group_id)
+
     query = f'SELECT * FROM comments WHERE comment_id == {comment_id} AND author_id == {user.get("user_id")}'
     correct = executeQuery(query)
     if isinstance(correct, bool) and not correct or len(correct) < 0:

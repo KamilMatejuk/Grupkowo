@@ -24,6 +24,7 @@ def getPosts(group_id: int, user: RequestRegister, start=None, end=None):
         ResponsePosts: lista z danymi o postach
     """
     checkGroupAccess(user, group_id)
+    
     query = f'SELECT post_id, author_id, created, text FROM posts WHERE group_id == {group_id}'
     if start is not None and end is not None:
         start_date = datetime.strptime(start, '%d%m%Y')
@@ -59,6 +60,7 @@ def getReactions(group_id: int, post_id: int, user: RequestRegister):
         ResponseReactions: lista z reakcjami
     """
     checkGroupAccess(user, group_id)
+    
     query = f'SELECT owner_id, reaction FROM reactions WHERE post_id == {post_id}'
     correct = executeQuery(query, objectKeys=['user_id', 'reaction'])
     if isinstance(correct, bool) and not correct:
@@ -81,24 +83,12 @@ def createPost(group_id: int, post: RequestCreatePost, user: RequestRegister):
 
     Raises:
         HTTPException: błąd wykonywania polecenia SQL
-        HTTPException: próba utworzenia posta w grupie do której się nie należy
-        HTTPException: błąd wykonywania polecenia SQL
 
     Returns:
         dict: empty response {}
     """
-    query = f'SELECT * FROM user_group WHERE group_id == {group_id} AND user_id == {user.get("user_id")}'
-    correct = executeQuery(query)
-    if isinstance(correct, bool) and not correct or len(correct) < 0:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail='Internal Server Error'
-        )
-    if len(correct) == 0:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='User doesn\'t belong to this group'
-        )
+    checkGroupAccess(user, group_id)
+    
     correct = insert('posts', ['group_id', 'author_id', 'created', 'text'], [
         f'{group_id}',
         f'{user.get("user_id")}',
@@ -124,26 +114,13 @@ def editPost(group_id: int, post_id: int, post: RequestCreatePost, user: Request
 
     Raises:
         HTTPException: błąd wykonywania polecenia SQL
-        HTTPException: próba edycji posta w grupie do której się nie należy
-        HTTPException: błąd wykonywania polecenia SQL
         HTTPException: próba edycji nie swojego posta
         HTTPException: błąd wykonywania polecenia SQL
         
     Returns:
         dict: empty response {}
     """
-    query = f'SELECT * FROM user_group WHERE group_id == {group_id} AND user_id == {user.get("user_id")}'
-    correct = executeQuery(query)
-    if isinstance(correct, bool) and not correct or len(correct) < 0:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail='Internal Server Error'
-        )
-    if len(correct) == 0:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='User doesn\'t belong to this group'
-        )
+    checkGroupAccess(user, group_id)
         
     query = f'SELECT * FROM posts WHERE post_id == {post_id} AND author_id == {user.get("user_id")}'
     correct = executeQuery(query)
@@ -183,26 +160,13 @@ def deletePost(group_id: int, post_id: int, user: RequestRegister):
 
     Raises:
         HTTPException: błąd wykonywania polecenia SQL
-        HTTPException: próba usunięcia posta w grupie do której się nie należy
-        HTTPException: błąd wykonywania polecenia SQL
         HTTPException: próba usunięcia nie swojego posta
         HTTPException: błąd wykonywania polecenia SQL
         
     Returns:
         dict: empty response {}
     """
-    query = f'SELECT * FROM user_group WHERE group_id == {group_id} AND user_id == {user.get("user_id")}'
-    correct = executeQuery(query)
-    if isinstance(correct, bool) and not correct or len(correct) < 0:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail='Internal Server Error'
-        )
-    if len(correct) == 0:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='User doesn\'t belong to this group'
-        )
+    checkGroupAccess(user, group_id)
         
     query = f'SELECT * FROM posts WHERE post_id == {post_id} AND author_id == {user.get("user_id")}'
     correct = executeQuery(query)
@@ -238,25 +202,12 @@ def addReaction(group_id: int, post_id: int, reaction: RequestReaction, user: Re
 
     Raises:
         HTTPException: błąd wykonywania polecenia SQL
-        HTTPException: próba reakcji an post w grupie do której się nie należy
-        HTTPException: błąd wykonywania polecenia SQL
         HTTPException: błąd wykonywania polecenia SQL
         
     Returns:
         dict: empty response {}
     """
-    query = f'SELECT * FROM user_group WHERE group_id == {group_id} AND user_id == {user.get("user_id")}'
-    correct = executeQuery(query)
-    if isinstance(correct, bool) and not correct or len(correct) < 0:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail='Internal Server Error'
-        )
-    if len(correct) == 0:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='User or post doesn\'t belong to this group'
-        )
+    checkGroupAccess(user, group_id)
     
     query = f'SELECT reaction FROM reactions WHERE post_id == {post_id} AND owner_id == {user.get("user_id")}'
     correct = executeQuery(query, objectKeys=['reaction'])
@@ -300,25 +251,12 @@ def deleteReaction(group_id: int, post_id: int, user: RequestRegister):
 
     Raises:
         HTTPException: błąd wykonywania polecenia SQL
-        HTTPException: próba reakcji an post w grupie do której się nie należy
-        HTTPException: błąd wykonywania polecenia SQL
         HTTPException: błąd wykonywania polecenia SQL
         
     Returns:
         dict: empty response {}
     """
-    query = f'SELECT * FROM user_group WHERE group_id == {group_id} AND user_id == {user.get("user_id")}'
-    correct = executeQuery(query)
-    if isinstance(correct, bool) and not correct or len(correct) < 0:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail='Internal Server Error'
-        )
-    if len(correct) == 0:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='User or post doesn\'t belong to this group'
-        )
+    checkGroupAccess(user, group_id)
     
     query = f'DELETE FROM reactions WHERE post_id == {post_id} AND owner_id == {user.get("user_id")}'
     correct = executeQuery(query)
