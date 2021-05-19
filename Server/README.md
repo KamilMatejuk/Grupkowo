@@ -1,4 +1,9 @@
-## Inicjalizacja bazy danych
+## Inicjalizacja
+```
+source env/bin/activate
+pip install -r requirements.txt
+```
+## Stworzenie bazy danych
 ```
 $ python database.py
 ```
