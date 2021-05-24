@@ -22,6 +22,8 @@ class WallActivity : AppCompatActivity(), ServerLisener {
     private var titleList = mutableListOf<String>()
     private var detailList = mutableListOf<String>()
     private var imageList = mutableListOf<Int>()
+    private var usernames = mutableListOf<String>()
+    private var comments = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +32,16 @@ class WallActivity : AppCompatActivity(), ServerLisener {
         //recyclerView adapter
 
         postToList()
-        postsList.adapter = PostAdapter(titleList, detailList, imageList)
+        addComments("bla", "andjghajkdhgjasdhgjahsfg")
+        addComments("bla2", "cndjghaasfsdhgjahsfg")
+        addComments("bla3", "vnddfhdfhaaaasdhgjahsfg")
+        Log.d("b",usernames[0])
+        Log.d("b",comments[0])
+        Log.d("b",usernames[1])
+        Log.d("b",comments[1])
+        Log.d("b",usernames[2])
+        Log.d("b",comments[2])
+        postsList.adapter = PostAdapter(this, titleList, detailList, imageList, usernames, comments)
         postsList.layoutManager = LinearLayoutManager(this)
         postsList.setHasFixedSize(false)
     }
@@ -46,6 +57,13 @@ class WallActivity : AppCompatActivity(), ServerLisener {
         titleList.add(title)
         detailList.add(detail)
         imageList.add(image)
+
+    }
+    private fun addComments(username: String, comment: String){
+
+        usernames.add(username)
+        comments.add(comment)
+
 
     }
 

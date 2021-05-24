@@ -1,15 +1,19 @@
 package com.example.myapplication
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.activity_wall.*
 
-class PostAdapter(private var titles: List<String>, private var details: List<String>,
-                  private var images: List<Int>):
+class PostAdapter(private var context: Context, private var titles: List<String>, private var details: List<String>,
+                  private var images: List<Int>, private var usernames: List<String>, private var comments: List<String>):
                   RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
     // deleting recyclerview comments from constructor for now
@@ -18,12 +22,19 @@ class PostAdapter(private var titles: List<String>, private var details: List<St
 
    inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
-       val postTitle: TextView = itemView.findViewById(R.id.textView)
-       val postDetails: TextView = itemView.findViewById(R.id.textView3)
-       val postImage: ImageView = itemView.findViewById(R.id.imageView)
+       var postTitle: TextView = itemView.findViewById(R.id.textView)
+       var postDetails: TextView = itemView.findViewById(R.id.textView3)
+       var postImage: ImageView = itemView.findViewById(R.id.imageView)
        var postComments: RecyclerView = itemView.findViewById(R.id.commentRecycler)
 
        init{
+
+          // postTitle = itemView.findViewById(R.id.textView)
+          // val postDetails: TextView = itemView.findViewById(R.id.textView3)
+          // val postImage: ImageView = itemView.findViewById(R.id.imageView)
+          // var postComments: RecyclerView = itemView.findViewById(R.id.commentRecycler)
+
+
            itemView.setOnClickListener { v: View ->
                val position: Int = adapterPosition
                Toast.makeText(
@@ -50,7 +61,16 @@ class PostAdapter(private var titles: List<String>, private var details: List<St
         holder.postTitle.text = titles[position]
         holder.postDetails.text = details[position]
         holder.postImage.setImageResource(images[position])
-        //holder.postComments = comments
+        setCommentRecycler(holder.postComments, usernames, comments)
+    }
+
+    private fun setCommentRecycler(commentRecyclerView: RecyclerView, usernames: List<String>, comments: List<String>){
+
+        val commentAdapter = CommentAdapter(context, usernames, comments)
+        commentRecyclerView.layoutManager = LinearLayoutManager(context)
+        commentRecyclerView.adapter = commentAdapter
+        commentRecyclerView.setHasFixedSize(false)
+
     }
 
 

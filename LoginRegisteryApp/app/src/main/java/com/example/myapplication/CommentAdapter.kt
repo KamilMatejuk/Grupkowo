@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,7 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 
-class CommentAdapter(private var usernames: List<String>, private var comments: List<String>):
+class CommentAdapter(private var context: Context, private var usernames: List<String>, private var comments: List<String>):
     RecyclerView.Adapter<CommentAdapter.ViewHolder>() {
 
 
@@ -31,7 +32,7 @@ class CommentAdapter(private var usernames: List<String>, private var comments: 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.sub_post, parent, false)
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.sub_comment, parent, false)
         return ViewHolder(v)
     }
 
