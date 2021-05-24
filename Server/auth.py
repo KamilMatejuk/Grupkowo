@@ -21,7 +21,7 @@ def hashPassword(plain_text_pass: str):
     Returns:
         str: hash hasła
     """
-    return hashpw(plain_text_pass, gensalt())
+    return hashpw(str(plain_text_pass).encode('utf-8'), gensalt())
 
 
 def checkPassword(plain_text_pass: str, hashed_pass: str):
@@ -35,7 +35,7 @@ def checkPassword(plain_text_pass: str, hashed_pass: str):
         bool: hasła sobie odpowiadają
     """
     try:
-        return checkpw(plain_text_pass, hashed_pass)
+        return checkpw(str(plain_text_pass).encode('utf-8'), hashed_pass)
     except:
         return False
 

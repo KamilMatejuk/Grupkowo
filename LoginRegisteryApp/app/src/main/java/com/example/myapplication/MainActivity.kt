@@ -15,7 +15,7 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONObject
 
-class MainActivity : AppCompatActivity(), ServerLisener {
+class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,8 +25,24 @@ class MainActivity : AppCompatActivity(), ServerLisener {
         setContentView(view)
 
         println("Token ${Server.getToken(this)}")
-        UserRequests.getCurrentUser(1, this)
-
+        UserRequests.getCurrentUser(applicationContext,
+            functionCorrect = { response ->
+                run {
+                    binding.id.text = "id: ${response?.getString("user_id") ?: ""}"
+                    binding.username.text = "username: ${response?.getString("username") ?: ""}"
+                    binding.email.text = "email: ${response?.getString("email") ?: ""}"
+                    binding.avatar.text = "avatar: ${response?.getString("avatar") ?: "null"}"
+                }
+            },
+            functionError = { errorMessage ->
+                run {
+                    Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
+                    Log.d(
+                        RegisterActivity.TAG,
+                        "Couldn't register user in out server: $errorMessage"
+                    )
+                }
+            })
     }
 
     fun logout(view: View) {
@@ -35,19 +51,5 @@ class MainActivity : AppCompatActivity(), ServerLisener {
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         finish()
-    }
-
-    override fun onResponseArrived(requestId: Int, error: String?, response: JSONObject?) {
-        if (requestId == 1) {
-            if (error != null) {
-                Toast.makeText(this, error, Toast.LENGTH_LONG).show()
-                Log.d(RegisterActivity.TAG, "Couldn't register user in out server: $error")
-            } else {
-                binding.id.text =       "id: ${response?.getString("user_id") ?: ""}"
-                binding.username.text = "username: ${response?.getString("username") ?: ""}"
-                binding.email.text =    "email: ${response?.getString("email") ?: ""}"
-                binding.avatar.text =   "avatar: ${response?.getString("avatar") ?: "null"}"
-            }
-        }
     }
 }

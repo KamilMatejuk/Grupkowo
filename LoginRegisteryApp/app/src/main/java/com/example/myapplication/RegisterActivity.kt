@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.activity_register.*
 import org.json.JSONObject
 import java.util.*
 
-class RegisterActivity : AppCompatActivity(), ServerLisener {
+class RegisterActivity : AppCompatActivity() {
     companion object {
         const val TAG: String = "RegisterActivity"
     }
@@ -81,7 +81,28 @@ class RegisterActivity : AppCompatActivity(), ServerLisener {
                     "Successfully registered user in firebase (uid: ${it.result?.user?.uid})"
                 )
                 // connect do our server
-                UserRequests.register(username, email, password, 1, this)
+                UserRequests.register(username, email, password, applicationContext,
+                    functionCorrect = { response ->
+                        run {
+                            // save token
+                            val token = response.getString("access_token")
+                            Server.saveToken(this, token)
+
+                            // log status
+                            Log.d(TAG, "Successfully registered user in out server")
+
+                            // open main activity
+                            val intent = Intent(this, MainActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        }
+                    },
+                    functionError = { errorMessage ->
+                        run {
+                            Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
+                            Log.d(TAG, "Couldn't register user in out server: $errorMessage")
+                        }
+                    })
             }
             .addOnFailureListener {
                 Log.d(TAG, "Failed to register user: ${it.message}")
@@ -103,27 +124,6 @@ class RegisterActivity : AppCompatActivity(), ServerLisener {
             .addOnFailureListener {
                 Log.d(TAG, "Failed to set value to database: ${it.message}")
             }
-    }
-
-    override fun onResponseArrived(requestId: Int, error: String?, response: JSONObject?) {
-        if (requestId == 1) {
-            if (error != null) {
-                Toast.makeText(this, error, Toast.LENGTH_LONG).show()
-                Log.d(TAG, "Couldn't register user in out server: $error")
-            } else {
-                // save token
-                val token = response?.getString("access_token") ?: return
-                Server.saveToken(this, token)
-
-                // log status
-                Log.d(TAG, "Successfully registered user in out server")
-
-                // open main activity
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                finish()
-            }
-        }
     }
 
     override fun onStop() {

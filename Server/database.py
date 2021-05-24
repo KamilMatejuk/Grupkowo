@@ -127,7 +127,7 @@ def createDummyData():
         insert('users', ['username', 'email', 'password'], [
             f'"username{i}"',
             f'"user{i}@gmail.com"',
-            f'"{hashpw(f"password{i}", gensalt())}"' ])
+            f'"{hashpw(str(f"password{i}").encode("utf-8"), gensalt())}"' ])
     # create groups
     insert('groups', ['name', 'admin_id'], ['"Super Grupa 1"', 1])
     insert('groups', ['name', 'admin_id'], ['"Super Grupa 2"', 1])

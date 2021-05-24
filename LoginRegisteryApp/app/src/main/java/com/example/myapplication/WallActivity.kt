@@ -8,7 +8,7 @@ import com.example.myapplication.RecyclerAdapters.PostAdapter
 import kotlinx.android.synthetic.main.activity_wall.*
 import org.json.JSONObject
 
-class WallActivity : AppCompatActivity(), ServerLisener {
+class WallActivity : AppCompatActivity() {
     companion object {
         const val TAG: String = "WallActivity"
     }
@@ -48,10 +48,6 @@ class WallActivity : AppCompatActivity(), ServerLisener {
         postsList.adapter = PostAdapter(this, titleList, detailList, imageList, usernames, comments)
         postsList.layoutManager = LinearLayoutManager(this)
         postsList.setHasFixedSize(false)
-    }
-
-    override fun onResponseArrived(requestId: Int, error: String?, response: JSONObject?) {
-        finish()
     }
 
     private fun addToList(title: String, detail: String, image: Int ){

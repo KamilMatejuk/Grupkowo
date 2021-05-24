@@ -30,7 +30,11 @@ import java.net.SocketTimeoutException
  * If functionality you need is not implemented, create it in correct file in this package
  * (e.g. just like 'register()' function):
  *
- * fun yourFunction(arg1, arg2, ..., argN, requestId: Int, cls: ServerLisener) {
+ * fun yourFunction(arg1, arg2, ..., argN,
+ *                  context: Context,
+ *                  functionCorrect: (JSONObject) -> Unit,
+ *                  functionError: (String) -> Unit) {
+ *
  *          val url = url + "your/relative/path/"
  *          val body = JSONObject("""
  *              {
@@ -41,7 +45,7 @@ import java.net.SocketTimeoutException
  *              }
  *              """.replace(" ", "")
  *              .replace("\n", ""))
- *          sendRequest(url, Request.Method.POST, body, requestId, cls)
+ *          sendRequest(url, Request.Method.POST, body, context, functionCorrect, functionError)
  *      }
  *
  * Remember, to create 'body' object the same as server expects (check in server docs)
@@ -49,30 +53,21 @@ import java.net.SocketTimeoutException
  * If argument in 'body' is int, don't surround it with anything
  *
  *
- * In your Activity, override onStop function:
- *      override fun onStop() {
- *          super.onStop()
- *          Server.cancelRequests()
- *      }
- *
- *
  * Run your function like e.g.:
- *      UserRequests.yourFunction(arg1, arg2, ..., argN, requestId, this)
- * Remember your requestId
- *
- * Change Activity to implement ServerListener,
- * and override required method onResponseArrived()
- *
- *
- * This method onResponseArrived() will fire, when server will return a response.
- * Here you can use requestId to find response to your specific request, check if
- * everything went correct (error == null) and act accordingly
+ *      UserRequests.yourFunction(arg1, arg2, ..., argN,
+ *          applicationContext,
+ *          functionCorrect = { response ->
+ *              run {
+ *                   // your code here if successful
+ *              }
+ *          },
+ *          functionError = { errorMessage ->
+ *              run {
+ *                   // your code here if not successful
+ *              }
+ *          })
  */
 
-
-interface ServerLisener {
-    fun onResponseArrived(requestId: Int, error: String?, response: JSONObject?)
-}
 
 object Server {
     // 127.0.0.1 odnosi się do samego emulatora,
@@ -118,22 +113,23 @@ object Server {
      * @param url adres
      * @param method Request.Method.GET / POST / PUT / DELETE
      * @param body json to be sent
-     * @param id number related to request, used for finding response correlating with request
-     *           later, when response arrives
-     * @param cls class sending the request, implementing ServerLisener
+     * @param context applicationContext
+     * @param functionCorrect function to be run, if request is successfull
+     * @param functionError function to be run, if request return error or isn't successfull
      * @param token if true adds token into header, to access protected endpoints
      */
     fun sendRequest(
         url: String,
         method: Int,
         body: JSONObject?,
-        id: Int,
-        cls: ServerLisener,
+        context: Context,
+        functionCorrect: (JSONObject) -> Unit,
+        functionError: (String) -> Unit,
         token: Boolean = false
     ) {
         val jsonObjectRequest = object : JsonObjectRequest(method, url, body,
             { response ->
-                cls.onResponseArrived(id, null, response)
+                functionCorrect(response)
             },
             { error ->
                 try {
@@ -143,15 +139,15 @@ object Server {
                     } else {
                         handleError(error)
                     }
-                    cls.onResponseArrived(id, errorMessage, null)
+                    functionError(errorMessage)
                 } catch (e: Exception) {
-                    cls.onResponseArrived(id, e.message.toString(), null)
+                    e.message?.let { functionError(it) }
                 }
             }) {
             override fun getHeaders(): Map<String, String> {
                 val params: MutableMap<String, String> = HashMap()
                 if (token) {
-                    val tokenStr = getToken((cls as Activity))
+                    val tokenStr = getToken(context)
                     params["Authorization"] = "Bearer $tokenStr"
                 }
                 return params

@@ -1,8 +1,8 @@
 package com.example.myapplication.ServerConnection
 
+import android.content.Context
 import com.android.volley.Request
 import com.example.myapplication.Server
-import com.example.myapplication.ServerLisener
 import org.json.JSONObject
 
 object UserRequests {
@@ -13,16 +13,17 @@ object UserRequests {
      * @param username username
      * @param email email address
      * @param password password
-     * @param requestId number related to request, used for finding response correlating
-     *           with request later, when response arrives
-     * @param cls class sending the request, implementing ServerLisener
+     * @param context applicationContext
+     * @param functionCorrect function to be run, if request is successfull
+     * @param functionError function to be run, if request return error or isn't successfull
      */
     fun register(
         username: String,
         email: String,
         password: String,
-        requestId: Int,
-        cls: ServerLisener
+        context: Context,
+        functionCorrect: (JSONObject) -> Unit,
+        functionError: (String) -> Unit
     ) {
         val url = Server.url + "user/me/"
         val body = JSONObject(
@@ -35,7 +36,14 @@ object UserRequests {
             """.replace(" ", "")
                 .replace("\n", "")
         )
-        Server.sendRequest(url, Request.Method.POST, body, requestId, cls)
+        Server.sendRequest(
+            url,
+            Request.Method.POST,
+            body,
+            context,
+            functionCorrect,
+            functionError
+        )
     }
 
     /**
@@ -43,15 +51,16 @@ object UserRequests {
      *
      * @param email username or email address
      * @param password password
-     * @param requestId number related to request, used for finding response correlating
-     *           with request later, when response arrives
-     * @param cls class sending the request, implementing ServerLisener
+     * @param context applicationContext
+     * @param functionCorrect function to be run, if request is successfull
+     * @param functionError function to be run, if request return error or isn't successfull
      */
     fun login(
         email: String,
         password: String,
-        requestId: Int,
-        cls: ServerLisener
+        context: Context,
+        functionCorrect: (JSONObject) -> Unit,
+        functionError: (String) -> Unit
     ) {
         val url = Server.url + "user/login/"
         val body = JSONObject(
@@ -63,22 +72,38 @@ object UserRequests {
             """.replace(" ", "")
                 .replace("\n", "")
         )
-        Server.sendRequest(url, Request.Method.POST, body, requestId, cls)
+        Server.sendRequest(
+            url,
+            Request.Method.POST,
+            body,
+            context,
+            functionCorrect,
+            functionError
+        )
     }
 
     /**
      * Get currently logged in user
      *
-     * @param requestId number related to request, used for finding response correlating
-     *           with request later, when response arrives
-     * @param cls class sending the request, implementing ServerLisener
+     * @param context applicationContext
+     * @param functionCorrect function to be run, if request is successfull
+     * @param functionError function to be run, if request return error or isn't successfull
      */
     fun getCurrentUser(
-        requestId: Int,
-        cls: ServerLisener
+        context: Context,
+        functionCorrect: (JSONObject) -> Unit,
+        functionError: (String) -> Unit
     ) {
         val url = Server.url + "user/me/"
         val body = null
-        Server.sendRequest(url, Request.Method.GET, body, requestId, cls, token=true)
+        Server.sendRequest(
+            url,
+            Request.Method.GET,
+            body,
+            context,
+            functionCorrect,
+            functionError,
+            token = true
+        )
     }
 }
