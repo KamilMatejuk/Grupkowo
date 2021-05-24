@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.myapplication.RecyclerItems
 
 class Post(postTitle: String, postDetail: String, postImage: Int, postUsernames: List<String>, postComments: List<Comment>) {
 

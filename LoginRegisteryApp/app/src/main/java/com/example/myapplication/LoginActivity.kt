@@ -1,13 +1,11 @@
 package com.example.myapplication
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.ServerConnection.UserRequests
-import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_login.*
 import org.json.JSONObject
@@ -21,7 +19,7 @@ class LoginActivity : AppCompatActivity(), ServerLisener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        login_button_login.setOnClickListener {
+        login_button.setOnClickListener {
             performLogin()
         }
 

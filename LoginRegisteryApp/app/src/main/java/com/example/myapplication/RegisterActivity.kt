@@ -50,7 +50,7 @@ class RegisterActivity : AppCompatActivity(), ServerLisener {
         }
 
         testButton.setOnClickListener {
-            val intent = Intent(this, WallActivity::class.java)
+            val intent = Intent(this, GroupsActivity::class.java)
             startActivity(intent)
             finish()
         }

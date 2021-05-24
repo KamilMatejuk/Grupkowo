@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.myapplication.RecyclerAdapters
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.example.myapplication.R
 
 class CommentAdapter(private var context: Context, private var usernames: List<String>, private var comments: List<String>):
     RecyclerView.Adapter<CommentAdapter.ViewHolder>() {

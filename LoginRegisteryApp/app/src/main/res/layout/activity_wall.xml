@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton"
+        android:id="@+id/make_post_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
@@ -20,14 +20,14 @@
         app:srcCompat="@android:drawable/ic_menu_edit" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton4"
+        android:id="@+id/messenger_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
         android:clickable="true"
         app:backgroundTint="#FFF59D"
-        app:layout_constraintBottom_toTopOf="@+id/floatingActionButton"
-        app:layout_constraintEnd_toEndOf="@+id/floatingActionButton"
+        app:layout_constraintBottom_toTopOf="@+id/make_post_button"
+        app:layout_constraintEnd_toEndOf="@+id/make_post_button"
         app:srcCompat="@android:drawable/ic_dialog_email" />
 
     <LinearLayout

@@ -1,16 +1,10 @@
 package com.example.myapplication
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.myapplication.ServerConnection.UserRequests
-import com.google.firebase.FirebaseApp
-import com.google.firebase.auth.FirebaseAuth
-import kotlinx.android.synthetic.main.activity_login.*
+import com.example.myapplication.RecyclerAdapters.PostAdapter
 import kotlinx.android.synthetic.main.activity_wall.*
 import org.json.JSONObject
 
@@ -28,6 +22,16 @@ class WallActivity : AppCompatActivity(), ServerLisener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_wall)
+
+        messenger_button.setOnClickListener {
+            val intent = Intent(this, MessagesActivity::class.java)
+            startActivity(intent)
+        }
+
+        make_post_button.setOnClickListener {
+            val intent = Intent(this, PostCreationActivity::class.java)
+            startActivity(intent)
+        }
 
         //recyclerView adapter
 

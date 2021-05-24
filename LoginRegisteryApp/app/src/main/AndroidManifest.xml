@@ -23,6 +23,11 @@
         <activity android:name=".LoginActivity"/>
         <activity android:name=".MainActivity"/>
         <activity android:name=".WallActivity"/>
+        <activity android:name=".GroupsActivity"/>
+        <activity android:name=".AccountActivity"/>
+        <activity android:name=".CreateGroupActivity"/>
+        <activity android:name=".PostCreationActivity"/>
+        <activity android:name=".MessagesActivity"/>
 
         <meta-data
             android:name="preloaded_fonts"
