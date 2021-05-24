@@ -1,7 +1,12 @@
 package com.example.myapplication
 
-class Post {
+class Post(postTitle: String, postDetail: String, postImage: Int, postUsernames: List<String>, postComments: List<Comment>) {
 
-    // TODO: Add needed lists to a post to add posts quicker
+    private var title = postTitle
+    private var detail = postDetail
+    private var image = postImage
+    private var usernames = postUsernames
+    private var incomments = postComments
+
 
 }

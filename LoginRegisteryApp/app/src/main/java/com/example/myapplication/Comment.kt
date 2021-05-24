@@ -1,7 +1,7 @@
 package com.example.myapplication
 
-class Comment {
+class Comment(commentText: String) {
 
-    // TODO: Add needed lists to a comment to add comments quicker
+    private var text = commentText
 
 }
