@@ -35,43 +35,35 @@ class WallActivity : AppCompatActivity(), ServerLisener {
         addComments("bla", "andjghajkdhgjasdhgjahsfg")
         addComments("bla2", "cndjghaasfsdhgjahsfg")
         addComments("bla3", "vnddfhdfhaaaasdhgjahsfg")
-        Log.d("b",usernames[0])
-        Log.d("b",comments[0])
-        Log.d("b",usernames[1])
-        Log.d("b",comments[1])
-        Log.d("b",usernames[2])
-        Log.d("b",comments[2])
+//        Log.d("b",usernames[0])
+//        Log.d("b",comments[0])
+//        Log.d("b",usernames[1])
+//        Log.d("b",comments[1])
+//        Log.d("b",usernames[2])
+//        Log.d("b",comments[2])
         postsList.adapter = PostAdapter(this, titleList, detailList, imageList, usernames, comments)
         postsList.layoutManager = LinearLayoutManager(this)
         postsList.setHasFixedSize(false)
     }
-
-
 
     override fun onResponseArrived(requestId: Int, error: String?, response: JSONObject?) {
         finish()
     }
 
     private fun addToList(title: String, detail: String, image: Int ){
-
         titleList.add(title)
         detailList.add(detail)
         imageList.add(image)
-
     }
-    private fun addComments(username: String, comment: String){
 
+    private fun addComments(username: String, comment: String){
         usernames.add(username)
         comments.add(comment)
-
-
     }
 
     private fun postToList(){
-
         for (i in 1..20) {
             addToList("Title $i", "Text $i", R.mipmap.ic_launcher)
         }
-
     }
 }
