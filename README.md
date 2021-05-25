@@ -17,6 +17,7 @@ Aplikacja mobilna na system Android 11 (API 30+), napisana w języku kotlin.
 ## Serwer
 Napisany w pythonie, z wykorzystaniem [FastAPI](https://fastapi.tiangolo.com/).
 Rozpis end-pointów można znaleźć wewnątrz folderu `Server`.
+Server jest deployowany poprzez serwis [Deta](https://fastapi.tiangolo.com/deployment/deta/), dostepny [tutaj](https://3eivij.deta.dev/).
 
 ## Baza Danych
 Relacyjna baza danych MySQL, wykorzystując połączenie `sqlite3` o poniższym schemacie:

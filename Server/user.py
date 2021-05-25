@@ -51,7 +51,9 @@ def register(user: RequestRegister):
             status_code=status.HTTP_406_NOT_ACCEPTABLE,
             detail='Email is already in database'
         )
+    print("Successfully inserted user into database")
     token = generateToken(user.email, user.password)
+    print(f"Successfully generated token {token}")
     return {
         'access_token': token,
         'token_type': 'bearer'

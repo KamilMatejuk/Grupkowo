@@ -1,5 +1,6 @@
 # extrenal packages
 import jwt
+import traceback
 from bcrypt import hashpw, checkpw, gensalt
 from fastapi.security import OAuth2PasswordBearer
 from fastapi import Depends, HTTPException, status
@@ -21,7 +22,7 @@ def hashPassword(plain_text_pass: str):
     Returns:
         str: hash hasła
     """
-    return hashpw(str(plain_text_pass).encode('utf-8'), gensalt())
+    return hashpw(plain_text_pass.encode('utf8'), gensalt()).decode('utf-8')
 
 
 def checkPassword(plain_text_pass: str, hashed_pass: str):
@@ -35,8 +36,11 @@ def checkPassword(plain_text_pass: str, hashed_pass: str):
         bool: hasła sobie odpowiadają
     """
     try:
-        return checkpw(str(plain_text_pass).encode('utf-8'), hashed_pass)
+        encoded_plain_text_pass = plain_text_pass.encode('utf8')
+        encoded_hashed_pass = hashed_pass.encode('utf8')
+        return checkpw(encoded_plain_text_pass, encoded_hashed_pass)
     except:
+        traceback.print_exc()
         return False
 
 
