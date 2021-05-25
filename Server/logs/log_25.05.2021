@@ -1,0 +1,16 @@
+INFO:     Started server process [19422]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://192.168.2.114:8000 (Press CTRL+C to quit)
+INFO:     5.104.252.32:42740 - "GET / HTTP/1.1" 200 OK
+INFO:     5.104.252.32:42742 - "GET /robots.txt?1621939090988 HTTP/1.1" 404 Not Found
+INFO:     5.104.252.32:42942 - "POST /user/me/ HTTP/1.1" 401 Unauthorized
+INFO:     5.104.252.32:42942 - "POST /user/me/ HTTP/1.1" 406 Not Acceptable
+Traceback (most recent call last):
+  File "/home/kamil/Desktop/Grupkowo-Server/database.py", line 188, in executeQuery
+    cursor.execute(query)
+sqlite3.IntegrityError: UNIQUE constraint failed: users.email
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [19422]

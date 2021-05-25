@@ -13,9 +13,7 @@ def getDatabasePath():
     Returns:
         str: ścieżka absolutna do pliku
     """
-    db_path = Path(__file__).absolute().parent.parent.joinpath('DB')
-    db_file = db_path.joinpath('grupkowo_v1.db')
-    return db_file
+    return Path(__file__).absolute().parent.joinpath('database.db')
 
 
 def initialize():
@@ -116,6 +114,7 @@ def insert(table: str, columns, args):
         }) VALUES ({
         ",".join(str(a) for a in args)
         })'''
+    print(f'Trying to insert query {query}')
     return executeQuery(query)
 
 

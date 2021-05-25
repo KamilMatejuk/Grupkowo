@@ -11,8 +11,6 @@ from chat import getMessages, addMessage, addReaction as addReactionMessage, del
 from user import login, register, getGroupsAdmin, getGroupsMember, showProfile, editProfile, deleteProfile
 
 
-# TODO: poprawa requestów GET, tak żeby zwracały wszystko od razu
-
 ##############################################################
 ################ utworzenie obiektu aplikacji ################
 ##############################################################

@@ -72,7 +72,8 @@ import java.net.SocketTimeoutException
 object Server {
     // 127.0.0.1 odnosi się do samego emulatora,
     // 10.0.2.2 odnosi się do komputera, na którym uruchomiony jest emulator
-    var url: String = "http://10.0.2.2:8000/"
+//     var url: String = "http://10.0.2.2:8000/"
+    var url: String = "http://5.104.252.32:8000/"
     private var tag: String = "TAG"
     private var requestQueue: RequestQueue? = null
 

@@ -1,3 +1,8 @@
+# Info
+Server jest deployowany na RespberryPi pod [tym adresem](http://5.104.252.32:8000).<br/>
+Domumentację można znaleźć [tutaj](http://5.104.252.32:8000/docs).
+
+
 ## Inicjalizacja
 ```
 source env/bin/activate
