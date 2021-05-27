@@ -142,7 +142,7 @@ def addUser(group_id: int, user: RequestAddUser, currUser: RequestRegister):
     """
     query = f'SELECT admin_id FROM groups WHERE group_id == {group_id}'
     correct = executeQuery(query, objectKeys=['admin_id'])
-    if isinstance(correct, bool) and not correct or len(correct) < 0:
+    if isinstance(correct, bool) and not correct or len(correct) == 0:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail='Internal Server Error'
@@ -157,7 +157,7 @@ def addUser(group_id: int, user: RequestAddUser, currUser: RequestRegister):
         f'{user.user_id}',
         f'{group_id}',
     ])
-    if isinstance(correct, bool) and not correct or len(correct) < 0:
+    if isinstance(correct, bool) and not correct or len(correct) == 0:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail='Internal Server Error'
@@ -183,12 +183,12 @@ def deleteUser(group_id: int, user_id: int, currUser: RequestRegister):
     """
     query = f'SELECT admin_id FROM groups WHERE group_id == {group_id}'
     correct = executeQuery(query, objectKeys=['admin_id'])
-    if isinstance(correct, bool) and not correct or len(correct) < 0:
+    if isinstance(correct, bool) and not correct:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail='Internal Server Error'
         )
-    if int(correct[0].get("admin_id")) != int(currUser.get("user_id")):
+    if len(correct) == 0 or int(correct[0].get("admin_id")) != int(currUser.get("user_id")):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail='User is not admin of this group'

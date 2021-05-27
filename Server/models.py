@@ -94,6 +94,9 @@ class ResponseUserProfile(BaseModel):
     email: str
     avatar: Optional[bytes] = None
 
+class ResponseAllUsers(BaseModel):
+    users: List[User]
+
 class ResponseCollegueProfile(BaseModel):
     user_id: int
     username: str

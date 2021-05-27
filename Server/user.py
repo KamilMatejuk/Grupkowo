@@ -190,3 +190,30 @@ def deleteProfile(user: RequestRegister):
         )
     return {}
 
+
+def getAllUsers():
+    """Wyświetl listę użytkowników
+
+    Raises:
+        HTTPException: jakiś nieoczekiwany błąd - sql injection
+        HTTPException: podany numer id nie istnieje w bazie
+
+    Returns:
+        ResponseAllUsers: lista z danymi użytkowników
+    """
+    query = f'SELECT user_id, username, avatar FROM users'
+    correct = executeQuery(
+        query, objectKeys=['user_id', 'username', 'avatar'])
+    if isinstance(correct, bool) and not correct:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail='Internal Server Error'
+        )
+    if len(correct) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='User not found'
+        )
+    return {
+        'users': correct
+    }

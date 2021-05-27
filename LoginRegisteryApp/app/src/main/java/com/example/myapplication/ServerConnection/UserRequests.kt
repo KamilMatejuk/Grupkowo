@@ -16,7 +16,6 @@ import org.json.JSONObject
  *     getUserGroupsMember()
  *     getUserGroupsAdmin()
  *     createGroup()
- *     // TODO get all registered users
  */
 object UserRequests {
 
@@ -135,6 +134,31 @@ object UserRequests {
         functionError: (String) -> Unit
     ) {
         val url = Server.url + "user/$userId/"
+        val body = null
+        Server.sendRequest(
+            url,
+            Request.Method.GET,
+            body,
+            context,
+            functionCorrect,
+            functionError,
+            token = true
+        )
+    }
+
+    /**
+     * Get a list of all registered users
+     *
+     * @param context applicationContext
+     * @param functionCorrect function to be run, if request is successfull
+     * @param functionError function to be run, if request return error or isn't successfull
+     */
+    fun getAllUsers(
+        context: Context,
+        functionCorrect: (JSONObject) -> Unit,
+        functionError: (String) -> Unit
+    ) {
+        val url = Server.url + "users-all/"
         val body = null
         Server.sendRequest(
             url,

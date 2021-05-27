@@ -8,7 +8,7 @@ from comment import getComments, addComment, editComment, deleteComment
 from group import deleteGroup, getGroup, getUsers, createGroup, deleteGroup, addUser, deleteUser
 from post import getPosts, createPost, editPost, deletePost, addReaction as addReactionPost, deleteReaction as deleteReactionPost
 from chat import getMessages, addMessage, addReaction as addReactionMessage, deleteReaction as deleteReactionMessage
-from user import login, register, getGroupsAdmin, getGroupsMember, showProfile, editProfile, deleteProfile
+from user import login, register, getGroupsAdmin, getGroupsMember, showProfile, editProfile, deleteProfile, getAllUsers
 
 
 ##############################################################
@@ -138,6 +138,15 @@ async def f8(group: RequestCreateGroup, user = Depends(getCurrentUser)):
     response_model=ResponseCollegueProfile)
 async def f9(user_id: int):
     return showProfile(user_id)
+
+# /users-all/
+@app.get(
+    '/users-all/',
+    tags=['inny użytkownik'],
+    summary='Pobranie listy wszystkich użytkowników',
+    response_model=ResponseAllUsers)
+async def f91():
+    return getAllUsers()
 
 
 ##############################################################
