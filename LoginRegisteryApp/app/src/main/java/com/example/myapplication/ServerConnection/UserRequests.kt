@@ -5,6 +5,19 @@ import com.android.volley.Request
 import com.example.myapplication.Server
 import org.json.JSONObject
 
+/**
+ * List of functions in module:
+ *     register()
+ *     login()
+ *     getCurrentUser()
+ *     getOtherUser()
+ *     editProfile()
+ *     deleteAccount()
+ *     getUserGroupsMember()
+ *     getUserGroupsAdmin()
+ *     createGroup()
+ *     // TODO get all registered users
+ */
 object UserRequests {
 
     /**
