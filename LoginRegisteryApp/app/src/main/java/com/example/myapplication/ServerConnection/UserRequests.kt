@@ -108,13 +108,40 @@ object UserRequests {
     }
 
     /**
+     * Get info about other user
+     *
+     * @param context applicationContext
+     * @param userId id number of user to check
+     * @param functionCorrect function to be run, if request is successfull
+     * @param functionError function to be run, if request return error or isn't successfull
+     */
+    fun getOtherUser(
+        context: Context,
+        userId: Int,
+        functionCorrect: (JSONObject) -> Unit,
+        functionError: (String) -> Unit
+    ) {
+        val url = Server.url + "user/$userId/"
+        val body = null
+        Server.sendRequest(
+            url,
+            Request.Method.GET,
+            body,
+            context,
+            functionCorrect,
+            functionError,
+            token = true
+        )
+    }
+
+    /**
      * Edit user's profile (choose args you want to edit)
      *
      * @param context applicationContext
-     * @param username username
-     * @param email email address
-     * @param password password
-     * @param avatarPath path into avatar image
+     * @param username (optional) username
+     * @param email (optional) email address
+     * @param password (optional) password
+     * @param avatarPath (optional) path into avatar image
      * @param functionCorrect function to be run, if request is successfull
      * @param functionError function to be run, if request return error or isn't successfull
      */
@@ -186,4 +213,99 @@ object UserRequests {
             token = true
         )
     }
+
+    /**
+     * Get groups, where currently logged in user is a member
+     *
+     * @param context applicationContext
+     * @param functionCorrect function to be run, if request is successfull
+     * @param functionError function to be run, if request return error or isn't successfull
+     */
+    fun getUserGroupsMember(
+        context: Context,
+        functionCorrect: (JSONObject) -> Unit,
+        functionError: (String) -> Unit
+    ) {
+        val url = Server.url + "user/groups-user/"
+        val body = null
+        Server.sendRequest(
+            url,
+            Request.Method.GET,
+            body,
+            context,
+            functionCorrect,
+            functionError,
+            token = true
+        )
+    }
+
+    /**
+     * Get groups, where currently logged in user is an admin
+     *
+     * @param context applicationContext
+     * @param functionCorrect function to be run, if request is successfull
+     * @param functionError function to be run, if request return error or isn't successfull
+     */
+    fun getUserGroupsAdmin(
+        context: Context,
+        functionCorrect: (JSONObject) -> Unit,
+        functionError: (String) -> Unit
+    ) {
+        val url = Server.url + "user/groups-admin/"
+        val body = null
+        Server.sendRequest(
+            url,
+            Request.Method.GET,
+            body,
+            context,
+            functionCorrect,
+            functionError,
+            token = true
+        )
+    }
+
+    /**
+     * Create a new group
+     *
+     * @param context applicationContext
+     * @param groupName name of new group
+     * @param imagePath (optional) path into new group image
+     * @param functionCorrect function to be run, if request is successfull
+     * @param functionError function to be run, if request return error or isn't successfull
+     */
+    fun createGroup(
+        context: Context,
+        groupName: String,
+        imagePath: String = "",
+        functionCorrect: (JSONObject) -> Unit,
+        functionError: (String) -> Unit
+    ) {
+        val url = Server.url + "user/groups-admin/"
+
+        var bodyStr = "{\"name\": \"$groupName\","
+        if (imagePath != "") {
+            // TODO convert image into string of bytes
+            val bytes = ""
+            bodyStr += "\"image\": \"$bytes\""
+        }
+        if (bodyStr.endsWith(",")) {
+            bodyStr = bodyStr.dropLast(1)
+        }
+        bodyStr = bodyStr
+            .replace(" ", "")
+            .replace("\n", "")
+        bodyStr += "}"
+        val body = JSONObject(bodyStr)
+        Server.sendRequest(
+            url,
+            Request.Method.POST,
+            body,
+            context,
+            functionCorrect,
+            functionError,
+            token = true
+        )
+    }
+
+
 }
