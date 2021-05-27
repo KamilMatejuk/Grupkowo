@@ -11,6 +11,7 @@ import org.json.JSONObject
  *     login()
  *     getCurrentUser()
  *     getOtherUser()
+ *     getAllUsers()
  *     editProfile()
  *     deleteAccount()
  *     getUserGroupsMember()
