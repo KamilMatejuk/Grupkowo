@@ -7,12 +7,10 @@ import org.json.JSONObject
 
 /**
  * List of functions in module:
- *     getPosts()
- *     addPost()
- *     editPost()
- *     deletePost()
- *     likePost()
- *     dislikePost()
+ *     getComments()
+ *     addComment()
+ *     editComment()
+ *     deleteComment()
  */
 object CommentRequests {
 
