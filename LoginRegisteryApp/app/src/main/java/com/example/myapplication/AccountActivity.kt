@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.ServerConnection.CommentRequests
 import com.example.myapplication.ServerConnection.GroupRequests
 import com.example.myapplication.ServerConnection.PostRequests
 import com.example.myapplication.ServerConnection.UserRequests
