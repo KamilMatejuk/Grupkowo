@@ -1,6 +1,7 @@
 # external packages
 from fastapi import FastAPI, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.responses import FileResponse
 # internal packages
 from models import *
 from auth import getCurrentUser
@@ -49,6 +50,13 @@ async def f01():
 async def f02(form: OAuth2PasswordRequestForm = Depends()):
     return login(form.username, form.password)
 
+# /database
+@app.get(
+    '/database/',
+    tags=['database'],
+    summary='Pobranie aktualnej bazy danych')
+async def f021():
+    return FileResponse('database.db')
 
 # /user/login
 @app.post(
