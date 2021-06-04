@@ -2,11 +2,19 @@ package com.example.myapplication
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.RecyclerAdapters.PostAdapter
+import com.example.myapplication.RecyclerItems.Post
+import com.example.myapplication.ServerConnection.PostRequests.getPosts
 import kotlinx.android.synthetic.main.activity_wall.*
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.json.JSONObject
+import kotlinx.serialization.decodeFromString
+
 
 class WallActivity : AppCompatActivity() {
     companion object {
@@ -35,6 +43,23 @@ class WallActivity : AppCompatActivity() {
 
         //recyclerView adapter
 
+        getPosts(applicationContext,4,"","",
+            functionCorrect = { response ->
+                             run {
+                                   // your code here if successful
+                                 //Log.d("abbsbsbsbs", response.toString())
+                                 val data = Json.decodeFromString<Post>(response.toString())
+                                 Log.d("abbsbsbsbasasass", data.toString())
+
+                              }
+                          },
+                      functionError = { errorMessage ->
+                              run {
+                                   Log.d("blad", errorMessage)
+                              }
+                          })
+
+
         postToList()
         addComments("bla", "andjghajkdhgjasdhgjahsfg")
         addComments("bla2", "cndjghaasfsdhgjahsfg")
@@ -48,6 +73,7 @@ class WallActivity : AppCompatActivity() {
         postsList.adapter = PostAdapter(this, titleList, detailList, imageList, usernames, comments)
         postsList.layoutManager = LinearLayoutManager(this)
         postsList.setHasFixedSize(false)
+
     }
 
     private fun addToList(title: String, detail: String, image: Int ){

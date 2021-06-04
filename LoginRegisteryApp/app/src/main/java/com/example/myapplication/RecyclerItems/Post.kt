@@ -1,12 +1,25 @@
 package com.example.myapplication.RecyclerItems
 
-class Post(postTitle: String, postDetail: String, postImage: Int, postUsernames: List<String>, postComments: List<Comment>) {
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
 
-    private var title = postTitle
-    private var detail = postDetail
-    private var image = postImage
-    private var usernames = postUsernames
-    private var incomments = postComments
+@Serializable
+ class Post {
 
+    var p_id: Int = 0
+    var a_id: Int = 0
+    var g_id: Int = 0
+    var creat: String = ""
+    var txt: String = ""
+
+
+    constructor(post_id: Int, author_id: Int, group_id: Int, created: String, text: String) {
+        this@Post.p_id = post_id
+        this@Post.a_id = author_id
+        this@Post.g_id = group_id
+        this@Post.creat = created
+        this@Post.txt = text
+
+    }
 
 }
