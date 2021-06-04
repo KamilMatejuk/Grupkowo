@@ -37,7 +37,7 @@ class GroupsActivity: AppCompatActivity() {
     }
 
     fun generateGroupRecycler() {
-        val groupInfo = UserRequests.getUserGroupsMember(applicationContext,
+        val groupData = UserRequests.getUserGroupsMember(applicationContext,
             functionCorrect = { response ->
                 run {
                     Toast.makeText(
