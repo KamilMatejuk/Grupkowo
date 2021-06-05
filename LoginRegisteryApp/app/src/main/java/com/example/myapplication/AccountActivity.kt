@@ -150,8 +150,7 @@ class AccountActivity : AppCompatActivity() {
                     val imgFile = File(uri)
                     if (imgFile.exists()) {
                         val myBitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
-                        val myImage: ImageView = binding.avatarImage
-                        myImage.setImageBitmap(myBitmap)
+                        binding.avatarImage.setImageBitmap(myBitmap)
                     }
                 }
             },

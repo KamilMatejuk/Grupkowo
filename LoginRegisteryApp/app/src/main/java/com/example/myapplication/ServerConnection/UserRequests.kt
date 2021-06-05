@@ -321,8 +321,7 @@ object UserRequests {
 
         var bodyStr = "{\"name\": \"$groupName\","
         if (imagePath != "") {
-            // TODO convert image into string of bytes
-            val bytes = ""
+            val bytes = Server.convertImgToBytes(imagePath)
             bodyStr += "\"image\": \"$bytes\""
         }
         if (bodyStr.endsWith(",")) {
