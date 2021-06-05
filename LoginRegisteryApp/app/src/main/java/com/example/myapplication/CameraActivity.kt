@@ -1,6 +1,8 @@
 package com.example.myapplication
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -12,6 +14,7 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_camera.*
 import java.io.File
@@ -30,6 +33,13 @@ class CameraActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
 
+        // check permissions
+        if (!allPermissionsGranted()) {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.CAMERA), 10
+            )
+        }
+
         startCamera()
 
         // Set up the listener for take photo button
@@ -41,6 +51,11 @@ class CameraActivity : AppCompatActivity() {
             outputDirectory = getOutputDirectory()
         }
         cameraExecutor = Executors.newSingleThreadExecutor()
+    }
+
+    private fun allPermissionsGranted() = arrayOf(Manifest.permission.CAMERA).all {
+        ContextCompat.checkSelfPermission(
+            baseContext, it) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun takePhoto() {
@@ -60,22 +75,18 @@ class CameraActivity : AppCompatActivity() {
             outputOptions, ContextCompat.getMainExecutor(this), object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     val savedUri = Uri.fromFile(photoFile)
-                    val intent = Intent(applicationContext, SetActivity::class.java)
-                    intent.putExtra("EXTRA_PATH", savedUri.toString())
-                    startActivityForResult(intent, 420)
+                    var savedUriStr = savedUri.toString()
+                    if (savedUri.toString().startsWith("file://")) {
+                        savedUriStr = savedUri.toString().replace("file://", "")
+                    }
+                    val intent = Intent()
+                    intent.putExtra("EXTRA_PATH", savedUriStr)
+                    setResult(RESULT_OK, intent)
+                    finish()
                 }
 
                 override fun onError(exception: ImageCaptureException) {}
             })
-    }
-
-    // return to main activity after SetActivity finished
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intentData: Intent?) {
-        super.onActivityResult(requestCode, resultCode, intentData)
-        if (requestCode == 420 && resultCode == RESULT_OK){
-            setResult(RESULT_OK)
-            finish()
-        }
     }
 
     private fun startCamera() {

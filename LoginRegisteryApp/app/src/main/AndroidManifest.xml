@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.myapplication">
 
+    <uses-feature android:name="android.hardware.camera.any" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -27,9 +30,6 @@
         <activity android:name=".CreateGroupActivity"/>
         <activity android:name=".PostCreationActivity"/>
         <activity android:name=".MessagesActivity"/>
-        <activity
-            android:name=".SetActivity"
-            android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity android:name=".CameraActivity" />
 
         <meta-data

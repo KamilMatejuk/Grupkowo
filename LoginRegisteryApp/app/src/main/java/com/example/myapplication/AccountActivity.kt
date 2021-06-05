@@ -1,19 +1,18 @@
 package com.example.myapplication
 
-import android.Manifest
+import android.R
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.content.res.Configuration
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.GridLayoutManager
 import com.example.myapplication.ServerConnection.UserRequests
 import com.example.myapplication.databinding.ActivityAccountBinding
+import java.io.File
+
 
 class AccountActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAccountBinding
@@ -28,6 +27,8 @@ class AccountActivity : AppCompatActivity() {
             functionCorrect = { response ->
                 run {
                     binding.username.text = response.getString("username")
+                    val bitmap = Server.convertBytesToImg(response.getString("avatar"))
+                    binding.avatarImage.setImageBitmap(bitmap)
                 }
             },
             functionError = { errorMessage ->
@@ -136,10 +137,9 @@ class AccountActivity : AppCompatActivity() {
             })
     }
 
-    fun changePhoto(view: View) {
-        // TODO add popup for choosing image of taking a photo
+    private fun changePhoto(uri: String) {
         UserRequests.editProfile(applicationContext,
-            avatarPath = "path/to/image",
+            avatarPath = uri,
             functionCorrect = { response ->
                 run {
                     Toast.makeText(
@@ -147,8 +147,12 @@ class AccountActivity : AppCompatActivity() {
                         "Successfully changed avatar",
                         Toast.LENGTH_LONG
                     ).show()
-                    // TODO update avatar image src
-                    // binding.avatar.setImageResource(...)
+                    val imgFile = File(uri)
+                    if (imgFile.exists()) {
+                        val myBitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
+                        val myImage: ImageView = binding.avatarImage
+                        myImage.setImageBitmap(myBitmap)
+                    }
                 }
             },
             functionError = { errorMessage ->
@@ -167,37 +171,15 @@ class AccountActivity : AppCompatActivity() {
     }
 
     fun addPhoto(view: View?) {
-        if (!allPermissionsGranted()) {
-            ActivityCompat.requestPermissions(
-                this, arrayOf(Manifest.permission.CAMERA), 10
-            )
-        }
-
         val intent = Intent(this, CameraActivity::class.java)
         startActivityForResult(intent, 69)
     }
 
-    private fun allPermissionsGranted() = arrayOf(Manifest.permission.CAMERA).all {
-        ContextCompat.checkSelfPermission(
-            baseContext, it) == PackageManager.PERMISSION_GRANTED
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intentData: Intent?) {
-        super.onActivityResult(requestCode, resultCode, intentData)
-        if (requestCode == 69 && resultCode == RESULT_OK){
-            orientationChanged(DataIO.getAll())
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 69 && resultCode == RESULT_OK) {
+            val uri = data?.getStringExtra("EXTRA_PATH") ?: ""
+            changePhoto(uri)
         }
     }
-
-    private fun orientationChanged(list: ArrayList<Image>){
-        val orientation = resources.configuration.orientation
-        val numberofColumns = if (orientation == Configuration.ORIENTATION_LANDSCAPE) 6 else 4
-        val gridLayoutManager = GridLayoutManager(applicationContext, numberofColumns)
-        gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-            override fun getSpanSize(position: Int): Int {
-                return if (DataIO.getAll()[position].type == "title") numberofColumns else 1
-            }
-        }
-    }
-
 }

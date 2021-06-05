@@ -4,6 +4,9 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Base64
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -15,10 +18,15 @@ import com.android.volley.toolbox.JsonObjectRequest
 import org.json.JSONException
 import org.json.JSONObject
 import org.xmlpull.v1.XmlPullParserException
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileNotFoundException
 import java.net.ConnectException
 import java.net.MalformedURLException
 import java.net.SocketException
 import java.net.SocketTimeoutException
+
 
 /**
  * ************************************ USAGE INSTRUCTIONS *****************************************
@@ -240,5 +248,27 @@ object Server {
      */
     fun cancelRequests() {
         requestQueue?.cancelAll(tag)
+    }
+
+    fun convertImgToBytes(uri: String): String? {
+        val imageFile = File(uri)
+        val fis: FileInputStream?
+        try {
+            fis = FileInputStream(imageFile)
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+            return null
+        }
+        val bm = BitmapFactory.decodeStream(fis)
+        val baos = ByteArrayOutputStream()
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        val b: ByteArray = baos.toByteArray()
+        println("bytes of image $b")
+        return Base64.encodeToString(b, Base64.DEFAULT)
+    }
+
+    fun convertBytesToImg(bytes: String): Bitmap? {
+        val imageBytes = Base64.decode(bytes, Base64.DEFAULT)
+        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
     }
 }
