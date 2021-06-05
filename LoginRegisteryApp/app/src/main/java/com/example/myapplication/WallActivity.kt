@@ -13,10 +13,10 @@ import com.example.myapplication.ServerConnection.PostRequests.addPost
 import com.example.myapplication.ServerConnection.GroupRequests.addUserToGroup
 import com.example.myapplication.ServerConnection.UserRequests.createGroup
 import kotlinx.android.synthetic.main.activity_wall.*
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
+//import kotlinx.serialization.decodeFromString
+//import kotlinx.serialization.json.Json
 import org.json.JSONObject
-import kotlinx.serialization.decodeFromString
+//import kotlinx.serialization.decodeFromString
 import org.json.JSONArray
 import java.util.*
 import java.util.Collections.synchronizedList
@@ -51,6 +51,7 @@ class WallActivity : AppCompatActivity() {
 
         messenger_button.setOnClickListener {
             val intent = Intent(this, MessagesActivity::class.java)
+            intent.putExtra("groupId", groupId)
             startActivity(intent)
         }
 

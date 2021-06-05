@@ -15,8 +15,8 @@ import com.example.myapplication.ServerConnection.UserRequests
 import com.example.myapplication.databinding.ActivityGroupsBinding
 import kotlinx.android.synthetic.main.activity_groups.*
 import kotlinx.android.synthetic.main.activity_wall.*
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
+//import kotlinx.serialization.decodeFromString
+//import kotlinx.serialization.json.Json
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
