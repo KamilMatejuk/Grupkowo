@@ -39,5 +39,6 @@ class CreateGroupActivity: AppCompatActivity() {
 
         val intent = Intent(this, WallActivity::class.java)
         startActivity(intent)
+        finish()
     }
 }

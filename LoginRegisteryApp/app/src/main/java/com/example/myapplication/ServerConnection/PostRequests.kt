@@ -14,7 +14,7 @@ import org.json.JSONObject
  *     likePost()
  *     dislikePost()
  */
-object PostRequests {
+object  PostRequests {
 
     /**
      * Get list of posst from group, from specified time (timestampStart < timestampEnd),
