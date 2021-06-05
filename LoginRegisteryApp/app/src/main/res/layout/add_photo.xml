@@ -63,7 +63,7 @@
                 android:maxLength="280"
                 android:textColorLink="@android:color/black" />
 
-            <android.support.design.widget.FloatingActionButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/actionButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -76,7 +76,9 @@
                 app:backgroundTint="@android:color/holo_green_light"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginRight="8dp" />
+                android:layout_marginRight="8dp"
+                android:contentDescription="" />
+
         </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
