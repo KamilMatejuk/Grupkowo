@@ -41,11 +41,13 @@ class WallActivity : AppCompatActivity() {
     private var detail: String = ""
     private var id: String = ""
 
+    var groupId: Int = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_wall)
+        groupId = intent.getIntExtra("groupId", 0)
 
         messenger_button.setOnClickListener {
             val intent = Intent(this, MessagesActivity::class.java)
@@ -54,7 +56,7 @@ class WallActivity : AppCompatActivity() {
 
         make_post_button.setOnClickListener {
             val intent = Intent(this, PostCreationActivity::class.java)
-            intent.putExtra("groupId", intent.getIntExtra("groupId", 0))
+            intent.putExtra("groupId", groupId)
             startActivity(intent)
         }
 
@@ -85,7 +87,7 @@ class WallActivity : AppCompatActivity() {
         // WYSTARCZY ZALOGOWAC SIE: LOGIN: damian@gmail.com  HASLO: damian
         // I WEJSC W DODANIE GRUPY POKI NIE MOZNA WYBRAC GRUP DO KTORYCH SIE NALEZY
 
-        val groupId = intent.getIntExtra("groupId", 0)
+//        val groupId = intent.getIntExtra("groupId", 0)
         getPosts(applicationContext, groupId,"","",
             functionCorrect = { response ->
                 run {
