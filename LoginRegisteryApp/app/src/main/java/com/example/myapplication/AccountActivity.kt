@@ -1,15 +1,19 @@
 package com.example.myapplication
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.myapplication.ServerConnection.*
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.GridLayoutManager
+import com.example.myapplication.ServerConnection.UserRequests
 import com.example.myapplication.databinding.ActivityAccountBinding
-import com.example.myapplication.databinding.ActivityMainBinding
 
 class AccountActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAccountBinding
@@ -161,4 +165,39 @@ class AccountActivity : AppCompatActivity() {
                 }
             })
     }
+
+    fun addPhoto(view: View?) {
+        if (!allPermissionsGranted()) {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.CAMERA), 10
+            )
+        }
+
+        val intent = Intent(this, CameraActivity::class.java)
+        startActivityForResult(intent, 69)
+    }
+
+    private fun allPermissionsGranted() = arrayOf(Manifest.permission.CAMERA).all {
+        ContextCompat.checkSelfPermission(
+            baseContext, it) == PackageManager.PERMISSION_GRANTED
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intentData: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intentData)
+        if (requestCode == 69 && resultCode == RESULT_OK){
+            orientationChanged(DataIO.getAll())
+        }
+    }
+
+    private fun orientationChanged(list: ArrayList<Image>){
+        val orientation = resources.configuration.orientation
+        val numberofColumns = if (orientation == Configuration.ORIENTATION_LANDSCAPE) 6 else 4
+        val gridLayoutManager = GridLayoutManager(applicationContext, numberofColumns)
+        gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return if (DataIO.getAll()[position].type == "title") numberofColumns else 1
+            }
+        }
+    }
+
 }

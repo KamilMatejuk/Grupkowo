@@ -43,6 +43,7 @@
         app:layout_constraintEnd_toEndOf="@+id/change_photo_button"
         app:layout_constraintTop_toTopOf="@+id/logout_button" />
 
+
     <Button
         android:id="@+id/change_photo_button"
         style="@style/login_fields"
@@ -55,14 +56,16 @@
         android:layout_marginRight="32dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/rounded_button"
-        android:onClick="changePhoto"
         android:text="Zmień Zdjęcie"
         android:textColor="@color/black"
+
         android:textStyle="bold"
         app:backgroundTint="#FFF59D"
         app:layout_constraintBottom_toTopOf="@+id/logout_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:onClick="addPhoto"/>
+
 
     <Button
         android:id="@+id/change_name_button"
@@ -117,13 +120,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/avatar"
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
             android:layout_width="250dp"
             android:layout_height="250dp"
-            android:layout_gravity="center|center_horizontal|center_vertical"
-            android:foregroundGravity="center_vertical|center|center_horizontal"
-            tools:srcCompat="@tools:sample/avatars" />
+            android:src="@android:drawable/ic_input_add"
+            android:text="Add Photo"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            app:fabCustomSize="70dp"
+            android:background="@android:color/transparent"
+            app:tint="@color/dark_white"
+            android:onClick="addPhoto"/>
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Photo"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
     </androidx.cardview.widget.CardView>
 
     <LinearLayout
@@ -156,4 +174,5 @@
         </androidx.cardview.widget.CardView>
 
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -27,6 +27,10 @@
         <activity android:name=".CreateGroupActivity"/>
         <activity android:name=".PostCreationActivity"/>
         <activity android:name=".MessagesActivity"/>
+        <activity
+            android:name=".SetActivity"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
+        <activity android:name=".CameraActivity" />
 
         <meta-data
             android:name="preloaded_fonts"
