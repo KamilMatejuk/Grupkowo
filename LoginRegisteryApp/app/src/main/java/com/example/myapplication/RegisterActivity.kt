@@ -32,7 +32,7 @@ class RegisterActivity : AppCompatActivity() {
         if (Server.getToken(this) != null) {
             Log.d(TAG, "User logged in, open main activity")
             // launch the main activity
-            val intent = Intent(this, RegisterActivity::class.java)
+            val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
         }

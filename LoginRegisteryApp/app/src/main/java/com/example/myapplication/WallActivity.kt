@@ -9,11 +9,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.RecyclerAdapters.PostAdapter
 import com.example.myapplication.RecyclerItems.Post
 import com.example.myapplication.ServerConnection.PostRequests.getPosts
+import com.example.myapplication.ServerConnection.PostRequests.addPost
+import com.example.myapplication.ServerConnection.GroupRequests.addUserToGroup
+import com.example.myapplication.ServerConnection.UserRequests.createGroup
 import kotlinx.android.synthetic.main.activity_wall.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.json.JSONObject
 import kotlinx.serialization.decodeFromString
+import org.json.JSONArray
+import java.util.*
+import java.util.Collections.synchronizedList
 
 
 class WallActivity : AppCompatActivity() {
@@ -22,10 +28,20 @@ class WallActivity : AppCompatActivity() {
     }
 
     private var titleList = mutableListOf<String>()
+    private var titleList2 = synchronizedList(titleList)
     private var detailList = mutableListOf<String>()
+    private var detailList2 = synchronizedList(detailList)
     private var imageList = mutableListOf<Int>()
+    private var imageList2 = synchronizedList(imageList)
     private var usernames = mutableListOf<String>()
     private var comments = mutableListOf<String>()
+    private var idList = mutableListOf<String>()
+
+    private var title: String = ""
+    private var detail: String = ""
+    private var id: String = ""
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,43 +59,84 @@ class WallActivity : AppCompatActivity() {
 
         //recyclerView adapter
 
-        getPosts(applicationContext,4,"","",
+       /* addPost(applicationContext,14,"PIERWSZY POST W MOJEJ GRUPIE",
             functionCorrect = { response ->
-                             run {
-                                   // your code here if successful
-                                 //Log.d("abbsbsbsbs", response.toString())
-                                 val data = Json.decodeFromString<Post>(response.toString())
-                                 Log.d("abbsbsbsbasasass", data.toString())
+                run {
+                    // your code here if successful
+                    //Log.d("abbsbsbsbs", response.toString())
+                    //val data = Json.decodeFromString<Post>(response.toString())
+                    //Log.d("abbsbsbsbasasass", data.toString())
+                    Log.d("super", "dodano post")
 
-                              }
-                          },
-                      functionError = { errorMessage ->
-                              run {
-                                   Log.d("blad", errorMessage)
-                              }
-                          })
+                }
+            },
+            functionError = { errorMessage ->
+                run {
+                    Log.d("bladdodania", errorMessage)
+                }
+            })
 
 
-        postToList()
+        */
+
+
+        // NA SZTYWNO WPISANY GROUPID 14 ZEBY MOC PRZETESTOWAC CZY DZIALA POBIERANIE POSTOW
+        // WYSTARCZY ZALOGOWAC SIE: LOGIN: damian@gmail.com  HASLO: damian
+        // I WEJSC W DODANIE GRUPY POKI NIE MOZNA WYBRAC GRUP DO KTORYCH SIE NALEZY
+
+        getPosts(applicationContext,14,"","",
+            functionCorrect = { response ->
+                run {
+                    // your code here if successful
+
+                    test(response)
+
+
+
+                }
+            },
+            functionError = { errorMessage ->
+                run {
+                    Log.d("blad", errorMessage)
+                }
+            })
+
+
+
+
+    }
+
+    fun test(response: JSONObject){
+        var jsonarray: JSONArray
+        var jobject: JSONObject
+        var jsonobject: JSONObject = JSONObject(response.toString())
+        jsonarray = jsonobject.getJSONArray("posts")
+
+        for (i in 0 until jsonarray.length()) {
+            jobject = jsonarray.getJSONObject(i)
+            title = jobject.getString("author_username")
+            detail = jobject.getString("text")
+            id = jobject.getString("author_id")
+            idList.add(id)
+            addToList(title,detail,R.mipmap.ic_launcher)
+
+        }
+
+        //postToList()
         addComments("bla", "andjghajkdhgjasdhgjahsfg")
         addComments("bla2", "cndjghaasfsdhgjahsfg")
         addComments("bla3", "vnddfhdfhaaaasdhgjahsfg")
-//        Log.d("b",usernames[0])
-//        Log.d("b",comments[0])
-//        Log.d("b",usernames[1])
-//        Log.d("b",comments[1])
-//        Log.d("b",usernames[2])
-//        Log.d("b",comments[2])
-        postsList.adapter = PostAdapter(this, titleList, detailList, imageList, usernames, comments)
+
+        postsList.adapter = PostAdapter(this, titleList2, detailList2, imageList2, usernames, comments)
         postsList.layoutManager = LinearLayoutManager(this)
         postsList.setHasFixedSize(false)
 
     }
 
     private fun addToList(title: String, detail: String, image: Int ){
-        titleList.add(title)
-        detailList.add(detail)
-        imageList.add(image)
+        titleList2.add(title)
+        detailList2.add(detail)
+        imageList2.add(image)
     }
 
     private fun addComments(username: String, comment: String){
