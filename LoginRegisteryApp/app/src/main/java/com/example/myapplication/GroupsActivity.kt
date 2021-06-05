@@ -7,10 +7,14 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.RecyclerAdapters.GroupAdapter
 import com.example.myapplication.RecyclerItems.Group
+import com.example.myapplication.RecyclerItems.Post
 import com.example.myapplication.ServerConnection.UserRequests
 import com.example.myapplication.databinding.ActivityGroupsBinding
 import kotlinx.android.synthetic.main.activity_groups.*
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import kotlin.reflect.typeOf
 
 class GroupsActivity: AppCompatActivity() {
@@ -23,7 +27,7 @@ class GroupsActivity: AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-
+        generateGroupRecycler()
     }
 
     fun goToAccount(view: View) {
@@ -37,7 +41,8 @@ class GroupsActivity: AppCompatActivity() {
     }
 
     fun generateGroupRecycler() {
-        val groupData = UserRequests.getUserGroupsMember(applicationContext,
+        var groupData = ""
+        UserRequests.getUserGroupsMember(applicationContext,
             functionCorrect = { response ->
                 run {
                     Toast.makeText(
@@ -45,6 +50,9 @@ class GroupsActivity: AppCompatActivity() {
                         "Successfully got groups",
                         Toast.LENGTH_LONG
                     ).show()
+                    groupData = response.toString()
+                    Log.d(GroupsActivity::class.java.name, "MAKER\n\n\n\n")
+                    Log.d(GroupsActivity::class.java.name, "DATA: ${response.toString()}")
                 }
             },
             functionError = { errorMessage ->
@@ -61,6 +69,7 @@ class GroupsActivity: AppCompatActivity() {
                 }
             })
 
-//            for(item in groupInfo)
+//        val groups = Json.decodeFromString<Group>(groupData.toString())
+//        binding.groupList.adapter = GroupAdapter(this, groups)
     }
 }
