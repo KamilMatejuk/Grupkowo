@@ -7,6 +7,7 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_group_button"
+        android:onClick="goToCreateGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
@@ -21,6 +22,7 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/account_button"
+        android:onClick="goToAccount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
@@ -60,6 +62,7 @@
             android:background="?android:attr/listDivider" />
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/groupList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="12dp"

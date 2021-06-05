@@ -63,7 +63,7 @@ class LoginActivity : AppCompatActivity() {
                                 "Successfully registered user in out server"
                             )
                             // open main activity
-                            val intent = Intent(this, AccountActivity::class.java)
+                            val intent = Intent(this, GroupsActivity::class.java)
                             startActivity(intent)
                             finish()
                         }

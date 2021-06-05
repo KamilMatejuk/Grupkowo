@@ -32,7 +32,7 @@ class RegisterActivity : AppCompatActivity() {
         if (Server.getToken(this) != null) {
             Log.d(TAG, "User logged in, open main activity")
             // launch the main activity
-            val intent = Intent(this, AccountActivity::class.java)
+            val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
         }
@@ -45,12 +45,6 @@ class RegisterActivity : AppCompatActivity() {
             Log.d(TAG, "Try to show login activity")
             // launch the login activity
             val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-
-        testButton.setOnClickListener {
-            val intent = Intent(this, GroupsActivity::class.java)
             startActivity(intent)
             finish()
         }
@@ -92,7 +86,7 @@ class RegisterActivity : AppCompatActivity() {
                             Log.d(TAG, "Successfully registered user in out server")
 
                             // open main activity
-                            val intent = Intent(this, AccountActivity::class.java)
+                            val intent = Intent(this, GroupsActivity::class.java)
                             startActivity(intent)
                             finish()
                         }
