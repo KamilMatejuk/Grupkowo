@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
+import kotlinx.android.synthetic.main.sub_post.view.*
 
 class PostAdapter(private var context: Context, private var titles: List<String>, private var details: List<String>,
                   private var images: List<Int>, private var usernames: List<String>, private var comments: List<String>):
@@ -41,6 +42,10 @@ class PostAdapter(private var context: Context, private var titles: List<String>
                    "You clicked on item: ${position + 1}",
                    Toast.LENGTH_SHORT
                ).show()
+           }
+
+           itemView.likeButton.setOnClickListener {
+
            }
 
 
