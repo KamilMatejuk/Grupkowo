@@ -54,6 +54,7 @@ class WallActivity : AppCompatActivity() {
 
         make_post_button.setOnClickListener {
             val intent = Intent(this, PostCreationActivity::class.java)
+            intent.putExtra("groupId", intent.getIntExtra("groupId", 0))
             startActivity(intent)
         }
 
@@ -84,7 +85,8 @@ class WallActivity : AppCompatActivity() {
         // WYSTARCZY ZALOGOWAC SIE: LOGIN: damian@gmail.com  HASLO: damian
         // I WEJSC W DODANIE GRUPY POKI NIE MOZNA WYBRAC GRUP DO KTORYCH SIE NALEZY
 
-        getPosts(applicationContext,14,"","",
+        val groupId = intent.getIntExtra("groupId", 0)
+        getPosts(applicationContext, groupId,"","",
             functionCorrect = { response ->
                 run {
                     // your code here if successful
