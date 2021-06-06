@@ -12,6 +12,7 @@ import com.example.myapplication.ServerConnection.ChatRequests
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.GsonBuilder
 
+
 class MessagesActivity : AppCompatActivity() {
     var groupId: Int = 0
 
