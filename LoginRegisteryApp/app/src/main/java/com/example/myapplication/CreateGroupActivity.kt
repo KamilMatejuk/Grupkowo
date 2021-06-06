@@ -38,7 +38,7 @@ class CreateGroupActivity : AppCompatActivity() {
         }
         UserRequests.createGroup(applicationContext,
             groupName = name,
-            imagePath = photoUri!!,
+            imagePath = photoUri,
             functionCorrect = {
                 run {
                     Toast.makeText(this, "Dodano Grupke!", Toast.LENGTH_LONG).show()

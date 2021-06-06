@@ -51,8 +51,7 @@ import java.net.SocketTimeoutException
  *                  ...
  *                  "paramNameN": "$argN"
  *              }
- *              """.replace(" ", "")
- *              .replace("\n", ""))
+ *              """.replace("\n", ""))
  *          sendRequest(url, Request.Method.POST, body, context, functionCorrect, functionError)
  *      }
  *

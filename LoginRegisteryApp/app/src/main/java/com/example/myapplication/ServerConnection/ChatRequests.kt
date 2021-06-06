@@ -34,7 +34,7 @@ object ChatRequests {
         functionCorrect: (JSONObject) -> Unit,
         functionError: (String) -> Unit
     ) {
-        val url = if (timestampStart != "" && timestampEnd != "")  {
+        val url = if (timestampStart != "" && timestampEnd != "") {
             Server.url + "group/$groupId/chats/$timestampStart-$timestampEnd/"
         } else {
             Server.url + "group/$groupId/chats/"
@@ -73,8 +73,7 @@ object ChatRequests {
             {
                 "text": "$messageText"
             }
-            """.replace(" ", "")
-                .replace("\n", "")
+            """.replace("\n", "")
         )
         Server.sendRequest(
             url,

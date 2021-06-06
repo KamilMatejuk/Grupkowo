@@ -14,7 +14,7 @@ import org.json.JSONObject
  *     likePost()
  *     dislikePost()
  */
-object  PostRequests {
+object PostRequests {
 
     /**
      * Get list of posst from group, from specified time (timestampStart < timestampEnd),
@@ -35,7 +35,7 @@ object  PostRequests {
         functionCorrect: (JSONObject) -> Unit,
         functionError: (String) -> Unit
     ) {
-        val url = if (timestampStart != "" && timestampEnd != "")  {
+        val url = if (timestampStart != "" && timestampEnd != "") {
             Server.url + "group/$groupId/posts/$timestampStart-$timestampEnd/"
         } else {
             Server.url + "group/$groupId/posts/"
@@ -74,8 +74,7 @@ object  PostRequests {
             {
                 "text": "$postText"
             }
-            """.replace(" ", "")
-                .replace("\n", "")
+            """.replace("\n", "")
         )
         Server.sendRequest(
             url,
@@ -112,8 +111,7 @@ object  PostRequests {
             {
                 "text": "$newPostText"
             }
-            """.replace(" ", "")
-                .replace("\n", "")
+            """.replace("\n", "")
         )
         Server.sendRequest(
             url,

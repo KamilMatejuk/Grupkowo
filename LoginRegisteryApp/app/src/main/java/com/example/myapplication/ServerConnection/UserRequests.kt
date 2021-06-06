@@ -46,8 +46,7 @@ object UserRequests {
                 "email": "$email",
                 "password": "$password"
             }
-            """.replace(" ", "")
-                .replace("\n", "")
+            """.replace("\n", "")
         )
         Server.sendRequest(
             url,
@@ -82,8 +81,7 @@ object UserRequests {
                 "name": "$email",
                 "password": "$password"
             }
-            """.replace(" ", "")
-                .replace("\n", "")
+            """.replace("\n", "")
         )
         Server.sendRequest(
             url,
@@ -211,7 +209,6 @@ object UserRequests {
             bodyStr = bodyStr.dropLast(1)
         }
         bodyStr = bodyStr
-            .replace(" ", "")
             .replace("\n", "")
         bodyStr += "}"
         val body = JSONObject(bodyStr)
@@ -313,23 +310,21 @@ object UserRequests {
     fun createGroup(
         context: Context,
         groupName: String,
-        imagePath: String = "",
+        imagePath: String?,
         functionCorrect: (JSONObject) -> Unit,
         functionError: (String) -> Unit
     ) {
         val url = Server.url + "user/groups-admin/"
 
         var bodyStr = "{\"name\": \"$groupName\","
-        if (imagePath != "") {
+        if (imagePath != null && imagePath != "") {
             val bytes = Server.convertImgToBytes(imagePath)
             bodyStr += "\"image\": \"$bytes\""
         }
         if (bodyStr.endsWith(",")) {
             bodyStr = bodyStr.dropLast(1)
         }
-        bodyStr = bodyStr
-            .replace(" ", "")
-            .replace("\n", "")
+        bodyStr = bodyStr.replace("\n", "")
         bodyStr += "}"
         val body = JSONObject(bodyStr)
         Server.sendRequest(

@@ -67,8 +67,7 @@ object CommentRequests {
             {
                 "text": "$commentText"
             }
-            """.replace(" ", "")
-                .replace("\n", "")
+            """.replace("\n", "")
         )
         Server.sendRequest(
             url,
@@ -107,8 +106,7 @@ object CommentRequests {
             {
                 "text": "$newCommentText"
             }
-            """.replace(" ", "")
-                .replace("\n", "")
+            """.replace("\n", "")
         )
         Server.sendRequest(
             url,

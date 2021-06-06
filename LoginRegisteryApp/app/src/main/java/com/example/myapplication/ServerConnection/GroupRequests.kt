@@ -117,8 +117,7 @@ object GroupRequests {
             {
                 "user_id": "$userId"
             }
-            """.replace(" ", "")
-                .replace("\n", "")
+            """.replace("\n", "")
         )
         Server.sendRequest(
             url,
