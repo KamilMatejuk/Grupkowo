@@ -31,6 +31,7 @@
         <activity android:name=".PostCreationActivity"/>
         <activity android:name=".MessagesActivity"/>
         <activity android:name=".CameraActivity" />
+        <activity android:name=".CommentActivity" />
 
         <meta-data
             android:name="preloaded_fonts"
