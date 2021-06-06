@@ -8,24 +8,30 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.RecyclerItems.Group
 import com.example.myapplication.Server
 import com.example.myapplication.WallActivity
 
-class GroupAdapter(private var context: Context, private var groups: List<Group>, private var admin: Boolean): RecyclerView.Adapter<GroupAdapter.ViewHolder>() {
-    inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+class GroupAdapter(
+    private var context: Context,
+    private var groups: List<Group>,
+    private var admin: Boolean,
+    private var resultLauncher: ActivityResultLauncher<Intent?>
+) : RecyclerView.Adapter<GroupAdapter.ViewHolder>() {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var groupName: TextView = itemView.findViewById(R.id.groupName)
         var groupImage: ImageView = itemView.findViewById(R.id.groupPhoto)
 
-        init{
+        init {
             itemView.setOnClickListener { v: View ->
                 val position: Int = adapterPosition
                 val intent = Intent(context, WallActivity::class.java)
                 intent.putExtra("groupId", groups[position].group_id)
                 intent.putExtra("admin", admin)
-                context.startActivity(intent)
+                resultLauncher.launch(intent)
             }
         }
     }

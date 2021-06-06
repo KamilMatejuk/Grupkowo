@@ -1,11 +1,14 @@
 package com.example.myapplication
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,6 +32,7 @@ import kotlin.reflect.typeOf
 class GroupsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityGroupsBinding
     private lateinit var groups: MutableList<Group>
+    private lateinit var resultLauncher: ActivityResultLauncher<Intent?>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,17 +40,22 @@ class GroupsActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
+        resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            loadGroupsAdmin()
+            loadGroupsMember()
+        }
+
         generateGroupRecycler()
     }
 
     fun goToAccount(view: View) {
         val intent = Intent(this, AccountActivity::class.java)
-        startActivity(intent)
+        resultLauncher.launch(intent)
     }
 
     fun goToCreateGroup(view: View) {
         val intent = Intent(this, CreateGroupActivity::class.java)
-        startActivity(intent)
+        resultLauncher.launch(intent)
     }
 
     fun generateGroupRecycler() {
@@ -83,7 +92,7 @@ class GroupsActivity : AppCompatActivity() {
                         GsonBuilder().create().fromJson(list, Array<Group>::class.java).toList()
                     // set recycler
                     val recycler = findViewById<RecyclerView>(R.id.groupListAdmin)
-                    recycler.adapter = GroupAdapter(this, objects, true)
+                    recycler.adapter = GroupAdapter(this, objects, true, resultLauncher)
                     recycler.layoutManager = LinearLayoutManager(this)
                 }
             },
@@ -107,7 +116,7 @@ class GroupsActivity : AppCompatActivity() {
                         GsonBuilder().create().fromJson(list, Array<Group>::class.java).toList()
                     // set recycler
                     val recycler = findViewById<RecyclerView>(R.id.groupListMember)
-                    recycler.adapter = GroupAdapter(this, objects, false)
+                    recycler.adapter = GroupAdapter(this, objects, false, resultLauncher)
                     recycler.layoutManager = LinearLayoutManager(this)
                 }
             },
