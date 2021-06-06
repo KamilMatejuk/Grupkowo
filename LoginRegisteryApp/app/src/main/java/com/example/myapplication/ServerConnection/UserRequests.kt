@@ -204,8 +204,7 @@ object UserRequests {
             bodyStr += "\"password\": \"$password\","
         }
         if (avatarPath != "") {
-            // TODO convert image into string of bytes
-            val bytes = ""
+            val bytes = Server.convertImgToBytes(avatarPath)
             bodyStr += "\"avatar\": \"$bytes\","
         }
         if (bodyStr.endsWith(",")) {
@@ -322,8 +321,7 @@ object UserRequests {
 
         var bodyStr = "{\"name\": \"$groupName\","
         if (imagePath != "") {
-            // TODO convert image into string of bytes
-            val bytes = ""
+            val bytes = Server.convertImgToBytes(imagePath)
             bodyStr += "\"image\": \"$bytes\""
         }
         if (bodyStr.endsWith(",")) {
