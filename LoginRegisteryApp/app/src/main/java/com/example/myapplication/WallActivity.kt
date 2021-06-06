@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.RecyclerAdapters.PostAdapter
 import com.example.myapplication.RecyclerItems.Message
 import com.example.myapplication.RecyclerItems.Post
@@ -27,14 +28,6 @@ class WallActivity : AppCompatActivity() {
         const val TAG: String = "WallActivity"
     }
 
-//    private var titleList = mutableListOf<String>()
-//    private var detailList = mutableListOf<String>()
-//    private var imageList = mutableListOf<String>()
-//    private var idList = mutableListOf<String>()
-//
-//    private var title: String = ""
-//    private var detail: String = ""
-//    private var id: String = ""
 
     var groupId: Int = 0
     var admin: Boolean = false
@@ -46,9 +39,19 @@ class WallActivity : AppCompatActivity() {
         groupId = intent.getIntExtra("groupId", 0)
         admin = intent.getBooleanExtra("admin", false)
 
-        val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            println("HEEERERREREREERRE")
             reloadPosts()
         }
+
+        postsList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (!recyclerView.canScrollVertically(1)) {
+                    reloadPosts()
+                }
+            }
+        })
 
         // move to chat
         messenger_button.setOnClickListener {
@@ -115,48 +118,4 @@ class WallActivity : AppCompatActivity() {
             })
 
     }
-
-//    fun test(response: JSONObject, objects: List<Post>) {
-//        var jsonarray: JSONArray
-//        var jobject: JSONObject
-//        var jsonobject: JSONObject = JSONObject(response.toString())
-//        jsonarray = jsonobject.getJSONArray("posts")
-//
-//        for (i in 0 until jsonarray.length()) {
-//            jobject = jsonarray.getJSONObject(i)
-//            title = jobject.getString("author_username")
-//            detail = jobject.getString("text")
-//            id = jobject.getString("post_id")
-//            idList.add(id)
-//            addToList(title, detail, R.mipmap.ic_launcher)
-//
-//        }
-//
-//
-//        postsList.adapter = PostAdapter(this, titleList, detailList, imageList, idList, groupId, objects)
-//        postsList.layoutManager = LinearLayoutManager(this)
-//        postsList.setHasFixedSize(false)
-//
-//    }
-
-//    private fun addToList(title: String, detail: String, image: String ){
-//        titleList.add(title)
-//        detailList.add(detail)
-//        imageList.add(image)
-//    }
-
-//    private fun addComments(username: String, comment: String) {
-//        usernames.add(username)
-//        comments.add(comment)
-//    }
-//
-//    private fun postToList() {
-//        for (i in 1..20) {
-//            addToList(
-//                "Title $i",
-//                "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\"",
-//                R.mipmap.ic_launcher
-//            )
-//        }
-//    }
 }

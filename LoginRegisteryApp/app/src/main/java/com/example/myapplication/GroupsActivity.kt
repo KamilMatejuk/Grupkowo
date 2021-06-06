@@ -1,22 +1,20 @@
 package com.example.myapplication
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
+import com.example.myapplication.Notifications.DownloadWorker
 import com.example.myapplication.RecyclerAdapters.GroupAdapter
-import com.example.myapplication.RecyclerAdapters.MessageAdapter
 import com.example.myapplication.RecyclerItems.Group
-import com.example.myapplication.RecyclerItems.Message
-import com.example.myapplication.RecyclerItems.Post
 import com.example.myapplication.ServerConnection.UserRequests
 import com.example.myapplication.databinding.ActivityGroupsBinding
 import com.google.gson.GsonBuilder
@@ -24,10 +22,7 @@ import kotlinx.android.synthetic.main.activity_groups.*
 import kotlinx.android.synthetic.main.activity_wall.*
 //import kotlinx.serialization.decodeFromString
 //import kotlinx.serialization.json.Json
-import org.json.JSONArray
-import org.json.JSONObject
 import java.util.*
-import kotlin.reflect.typeOf
 
 class GroupsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityGroupsBinding
@@ -46,6 +41,14 @@ class GroupsActivity : AppCompatActivity() {
         }
 
         generateGroupRecycler()
+
+        // start checking for updates
+        val data = Data.Builder()
+        val compressionWork = OneTimeWorkRequest
+            .Builder(DownloadWorker::class.java)
+            .setInputData(data.build())
+            .build()
+        WorkManager.getInstance().enqueue(compressionWork)
     }
 
     fun goToAccount(view: View) {

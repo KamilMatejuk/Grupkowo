@@ -1,17 +1,16 @@
 package com.example.myapplication
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.Notifications.DataIO
 import com.example.myapplication.ServerConnection.UserRequests
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_register.*
-import org.json.JSONObject
 import java.util.*
 
 class RegisterActivity : AppCompatActivity() {
@@ -27,6 +26,9 @@ class RegisterActivity : AppCompatActivity() {
 
         // set up server connection
         Server.setUp(this, this)
+
+        // initialize database
+        DataIO.initializeDatabase(this)
 
         // check if logged in
         if (Server.getToken(this) != null) {
