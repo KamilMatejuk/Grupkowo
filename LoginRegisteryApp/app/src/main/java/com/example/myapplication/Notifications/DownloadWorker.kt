@@ -38,8 +38,6 @@ class DownloadWorker(context: Context, parameters: WorkerParameters) :
     }
 
     private fun checkChanges() {
-        // TODO pobrać posty z każdej grupy, napisać bazę w której będą przechowywane wszytskie posty, sprawdzić czy jest coś mowego i pokazać powiadomienie
-        // TODO zrobić tak żeby powiadomienie nie znikało od razu
         // get data from groups admin
         UserRequests.getUserGroupsAdmin(applicationContext,
             functionCorrect = { response ->
