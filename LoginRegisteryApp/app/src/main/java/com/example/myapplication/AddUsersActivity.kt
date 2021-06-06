@@ -2,6 +2,7 @@ package com.example.myapplication
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,9 +30,9 @@ class AddUsersActivity : AppCompatActivity() {
                     // convert into a list of objects
                     var list = response.get("users").toString()
                     var userList = GsonBuilder().create().fromJson(list, Array<User>::class.java).toList()
-                    usersBelonging = if (userList.isNotEmpty()) {
+                    usersBelonging = try {
                         userList as ArrayList<User>
-                    } else {
+                    } catch (e: Exception) {
                         arrayListOf()
                     }
 
@@ -41,9 +42,9 @@ class AddUsersActivity : AppCompatActivity() {
                                 // convert into a list of objects
                                 list = response.get("users").toString()
                                 userList = GsonBuilder().create().fromJson(list, Array<User>::class.java).toList()
-                                usersAll = if (userList.isNotEmpty()) {
+                                usersAll = try {
                                     userList as ArrayList<User>
-                                } else {
+                                } catch (e: Exception) {
                                     arrayListOf()
                                 }
 
@@ -53,10 +54,16 @@ class AddUsersActivity : AppCompatActivity() {
                                 recycler.adapter = adapter
                             }
                         },
-                        functionError = {})
+                        functionError = {
+                            Toast.makeText(this, "Error: $it", Toast.LENGTH_SHORT).show()
+                            finish()
+                        })
                 }
             },
-            functionError = {})
+            functionError = {
+                Toast.makeText(this, "Error: $it", Toast.LENGTH_SHORT).show()
+                finish()
+            })
     }
 
     fun save(view: View) {

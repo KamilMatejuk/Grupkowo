@@ -42,46 +42,32 @@ class LoginActivity : AppCompatActivity() {
         }
 
         Log.d(RegisterActivity.TAG, "Attempting log in user with email: $email")
-
-        // Firebase Authentication to create a user with email and password
-        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener {
-                if (!it.isSuccessful) {
-                    return@addOnCompleteListener
+        UserRequests.login(email, password, applicationContext,
+            functionCorrect = { response ->
+                run {
+                    // save token
+                    val token = response.getString("access_token")
+                    Server.saveToken(this, token)
+                    // log status
+                    Log.d(
+                        RegisterActivity.TAG,
+                        "Successfully registered user in out server"
+                    )
+                    // open main activity
+                    val intent = Intent(this, GroupsActivity::class.java)
+                    startActivity(intent)
+                    finish()
                 }
-                Log.d(RegisterActivity.TAG, "Successfully logged in user in firebase")
-                // connect to our server
-                UserRequests.login(email, password, applicationContext,
-                    functionCorrect = { response ->
-                        run {
-                            // save token
-                            val token = response.getString("access_token")
-                            Server.saveToken(this, token)
-                            // log status
-                            Log.d(
-                                RegisterActivity.TAG,
-                                "Successfully registered user in out server"
-                            )
-                            // open main activity
-                            val intent = Intent(this, GroupsActivity::class.java)
-                            startActivity(intent)
-                            finish()
-                        }
-                    },
-                    functionError = { errorMessage ->
-                        run {
-                            Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
-                            Log.d(
-                                RegisterActivity.TAG,
-                                "Couldn't register user in out server: $errorMessage"
-                            )
-                        }
-                    })
-            }
-            .addOnFailureListener {
-                Log.d(RegisterActivity.TAG, "Failed to log in user: ${it.message}")
-                Toast.makeText(this, "Failed to log in: ${it.message}", Toast.LENGTH_SHORT).show()
-            }
+            },
+            functionError = { errorMessage ->
+                run {
+                    Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
+                    Log.d(
+                        RegisterActivity.TAG,
+                        "Couldn't register user in out server: $errorMessage"
+                    )
+                }
+            })
     }
 
     override fun onStop() {

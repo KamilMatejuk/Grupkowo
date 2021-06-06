@@ -1,16 +1,21 @@
 package com.example.myapplication
 
-import android.R
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.transition.TransitionManager
 import android.util.Log
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.myapplication.ServerConnection.UserRequests
 import com.example.myapplication.databinding.ActivityAccountBinding
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.io.File
 
 
@@ -79,62 +84,117 @@ class AccountActivity : AppCompatActivity() {
             })
     }
 
+    @SuppressLint("CutPasteId")
     fun changePassword(view: View) {
-        // TODO add popup asking for new password
-        UserRequests.editProfile(applicationContext,
-            password = "password",
-            functionCorrect = { response ->
-                run {
-                    Toast.makeText(
-                        this,
-                        "Successfully changed password",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            },
-            functionError = { errorMessage ->
-                run {
-                    Toast.makeText(
-                        this,
-                        "Couldn't change password",
-                        Toast.LENGTH_LONG
-                    ).show()
-                    Log.d(
-                        AccountActivity::class.java.name,
-                        "Couldn't change password: $errorMessage"
-                    )
-                }
-            })
+        val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.popup_edittext, null)
+        val popupWindow = PopupWindow(
+            view,
+            LinearLayout.LayoutParams.MATCH_PARENT, // width
+            LinearLayout.LayoutParams.WRAP_CONTENT, // height
+            true
+        )
+        popupWindow.elevation = 10.0F
+
+        val et = view.findViewById<EditText>(R.id.edit_text)
+        val btn = view.findViewById<FloatingActionButton>(R.id.btn)
+        et.hint = "New password"
+        btn.setOnClickListener {
+            popupWindow.dismiss()
+        }
+
+        // close popup
+        popupWindow.setOnDismissListener {
+            val pass = et.text.toString().trim()
+            if (pass.isNotEmpty()) {
+                UserRequests.editProfile(applicationContext,
+                    password = pass,
+                    functionCorrect = {
+                        run {
+                            Toast.makeText(
+                                this,
+                                "Successfully changed password",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    },
+                    functionError = { errorMessage ->
+                        run {
+                            Toast.makeText(
+                                this,
+                                "Couldn't change password",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            Log.d(
+                                AccountActivity::class.java.name,
+                                "Couldn't change password: $errorMessage"
+                            )
+                        }
+                    })
+            }
+        }
+
+        // show the popup window on app
+        val rootLayout = view.findViewById<ConstraintLayout>(R.id.root_layout)
+        TransitionManager.beginDelayedTransition(rootLayout)
+        popupWindow.showAtLocation(rootLayout, Gravity.CENTER, 0, 0)
+
     }
 
     fun changeUsername(view: View) {
-        // TODO add popup asking for new username
-        val newUsername = "new username"
-        UserRequests.editProfile(applicationContext,
-            username = newUsername,
-            functionCorrect = { response ->
-                run {
-                    Toast.makeText(
-                        this,
-                        "Successfully changed username",
-                        Toast.LENGTH_LONG
-                    ).show()
-                    binding.username.text = newUsername
-                }
-            },
-            functionError = { errorMessage ->
-                run {
-                    Toast.makeText(
-                        this,
-                        "Couldn't change username",
-                        Toast.LENGTH_LONG
-                    ).show()
-                    Log.d(
-                        AccountActivity::class.java.name,
-                        "Couldn't change username: $errorMessage"
-                    )
-                }
-            })
+        val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.popup_edittext, null)
+        val popupWindow = PopupWindow(
+            view,
+            LinearLayout.LayoutParams.MATCH_PARENT, // width
+            LinearLayout.LayoutParams.WRAP_CONTENT, // height
+            true
+        )
+        popupWindow.elevation = 10.0F
+
+        val et = view.findViewById<EditText>(R.id.edit_text)
+        val btn = view.findViewById<FloatingActionButton>(R.id.btn)
+        et.hint = "New username"
+        btn.setOnClickListener {
+            popupWindow.dismiss()
+        }
+
+        // close popup
+        popupWindow.setOnDismissListener {
+            val name = et.text.toString().trim()
+            if (name.isNotEmpty()) {
+                UserRequests.editProfile(applicationContext,
+                    username = name,
+                    functionCorrect = { response ->
+                        run {
+                            Toast.makeText(
+                                this,
+                                "Successfully changed username",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            binding.username.text = name
+                        }
+                    },
+                    functionError = { errorMessage ->
+                        run {
+                            Toast.makeText(
+                                this,
+                                "Couldn't change username",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            Log.d(
+                                AccountActivity::class.java.name,
+                                "Couldn't change username: $errorMessage"
+                            )
+                        }
+                    })
+            }
+        }
+
+        // show the popup window on app
+        val rootLayout = view.findViewById<ConstraintLayout>(R.id.root_layout)
+        TransitionManager.beginDelayedTransition(rootLayout)
+        popupWindow.showAtLocation(rootLayout, Gravity.CENTER, 0, 0)
     }
 
     private fun changePhoto(uri: String) {
