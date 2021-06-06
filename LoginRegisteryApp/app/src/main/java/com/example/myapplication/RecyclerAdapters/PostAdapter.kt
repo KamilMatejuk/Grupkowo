@@ -1,6 +1,5 @@
 package com.example.myapplication.RecyclerAdapters
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
@@ -13,11 +12,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.CommentActivity
 import com.example.myapplication.R
-import com.example.myapplication.WallActivity
 import kotlinx.android.synthetic.main.sub_post.view.*
 
 class PostAdapter(private var context: Context, private var titles: List<String>, private var details: List<String>,
-                  private var images: List<Int>, private var usernames: List<String>, private var comments: List<String>):
+                  private var images: List<Int>, private var ids: MutableList<String>, private var group_id: Int
+):
                   RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
     // deleting recyclerview comments from constructor for now
@@ -50,8 +49,12 @@ class PostAdapter(private var context: Context, private var titles: List<String>
 
             }
 
-            itemView.commentButton.setOnClickListener {
+            itemView.commentButton.setOnClickListener { v: View ->
+                val position: Int = this.adapterPosition
+                var postId = ids[position].toInt()
                 val intent = Intent(context, CommentActivity::class.java)
+                intent.putExtra("postId", postId)
+                intent.putExtra("groupId", group_id)
                 context.startActivity(intent)
             }
         }
