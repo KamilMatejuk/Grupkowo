@@ -43,6 +43,7 @@ class CommentActivity:AppCompatActivity() {
         }
 
         make_comment_button.setOnClickListener {
+            Log.d("SPRAWDZ",binding.newCommentText.text.toString())
             CommentRequests.addComment(this, groupId,postId, binding.newCommentText.text.toString(),
                 functionCorrect = {
                     run {

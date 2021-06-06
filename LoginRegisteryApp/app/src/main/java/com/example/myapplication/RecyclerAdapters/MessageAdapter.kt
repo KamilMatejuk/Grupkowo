@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.RecyclerItems.Message
 import com.example.myapplication.ServerConnection.ChatRequests
+import com.example.myapplication.ServerConnection.PostRequests
 import java.text.SimpleDateFormat
 import java.util.*
 

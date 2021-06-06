@@ -12,10 +12,19 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.CommentActivity
 import com.example.myapplication.R
+import com.example.myapplication.RecyclerItems.Message
+import com.example.myapplication.RecyclerItems.Post
+import com.example.myapplication.ServerConnection.ChatRequests
+import com.example.myapplication.ServerConnection.PostRequests
 import kotlinx.android.synthetic.main.sub_post.view.*
 
-class PostAdapter(private var context: Context, private var titles: List<String>, private var details: List<String>,
-                  private var images: List<Int>, private var ids: MutableList<String>, private var group_id: Int
+class PostAdapter(private var context: Context,
+                  private var titles: List<String>,
+                  private var details: List<String>,
+                  private var images: List<Int>,
+                  private var ids: MutableList<String>,
+                  private var group_id: Int,
+                  private var posts: List<Post>
 ):
                   RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
@@ -27,13 +36,37 @@ class PostAdapter(private var context: Context, private var titles: List<String>
         var postTitle: TextView = itemView.findViewById(R.id.textView)
         var postDetails: TextView = itemView.findViewById(R.id.textView3)
         var postImage: ImageView = itemView.findViewById(R.id.imageView)
+
+        var likesIMG: ImageView = itemView.findViewById(R.id.likeButton)
+        var likesTV: TextView = itemView.findViewById(R.id.likeCounter)
+
 //           var postComments: RecyclerView = itemView.findViewById(R.id.commentRecycler)
         init{
 
-              // postTitle = itemView.findViewById(R.id.textView)
-              // val postDetails: TextView = itemView.findViewById(R.id.textView3)
-              // val postImage: ImageView = itemView.findViewById(R.id.imageView)
-              // var postComments: RecyclerView = itemView.findViewById(R.id.commentRecycler)
+    likesIMG.setOnClickListener {
+        if (posts[position].author_liked) {
+            PostRequests.dislikePost(context, group_id, posts[position].post_id,
+                functionCorrect = {
+                    run {
+                        likesTV.text =
+                            "${likesTV.text.toString().split(" ")[0].toInt() - 1} likes"
+                        likesIMG.setImageResource(R.drawable.heart_off)
+                        likesTV.setTextColor(context.resources.getColor(R.color.black))
+                    }
+                }, functionError = {})
+        } else {
+            PostRequests.likePost(context, group_id, posts[position].post_id,
+                functionCorrect = {
+                    run {
+                        likesTV.text =
+                            "${likesTV.text.toString().split(" ")[0].toInt() + 1} likes"
+                        likesIMG.setImageResource(R.drawable.heart)
+                        likesTV.setTextColor(context.resources.getColor(R.color.purple_500))
+                    }
+                }, functionError = {})
+        }
+        posts[position].author_liked = !posts[position].author_liked
+    }
 
 
             itemView.setOnClickListener { v: View ->
@@ -45,9 +78,9 @@ class PostAdapter(private var context: Context, private var titles: List<String>
                 ).show()
             }
 
-            itemView.likeButton.setOnClickListener {
-
-            }
+           // itemView.likeButton.setOnClickListener {
+//
+          //  }
 
             itemView.commentButton.setOnClickListener { v: View ->
                 val position: Int = this.adapterPosition
@@ -73,7 +106,15 @@ class PostAdapter(private var context: Context, private var titles: List<String>
         holder.postTitle.text = titles[position]
         holder.postDetails.text = details[position]
         holder.postImage.setImageResource(images[position])
-//        setCommentRecycler(holder.postComments, usernames, comments)
+
+        holder.likesTV.text = "${posts[position].likes} likes"
+        if (posts[position].author_liked) {
+            holder.likesIMG.setImageResource(R.drawable.heart)
+            holder.likesTV.setTextColor(context.resources.getColor(R.color.purple_500))
+        } else {
+            holder.likesIMG.setImageResource(R.drawable.heart_off)
+            holder.likesTV.setTextColor(context.resources.getColor(R.color.black))
+        }
     }
 
     private fun setCommentRecycler(commentRecyclerView: RecyclerView, usernames: List<String>, comments: List<String>){

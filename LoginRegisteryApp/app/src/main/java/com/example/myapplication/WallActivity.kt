@@ -8,9 +8,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.RecyclerAdapters.PostAdapter
+import com.example.myapplication.RecyclerItems.Message
 import com.example.myapplication.RecyclerItems.Post
 import com.example.myapplication.ServerConnection.GroupRequests
 import com.example.myapplication.ServerConnection.PostRequests.getPosts
+import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.activity_wall.*
 //import kotlinx.serialization.decodeFromString
 //import kotlinx.serialization.json.Json
@@ -93,8 +95,9 @@ class WallActivity : AppCompatActivity() {
             functionCorrect = { response ->
                 run {
                     // your code here if successful
-
-                    test(response)
+                    val list = response.get("posts").toString()
+                    val objects: List<Post> = GsonBuilder().create().fromJson(list, Array<Post>::class.java).toList()
+                    test(response,objects)
 
 
                 }
@@ -108,7 +111,7 @@ class WallActivity : AppCompatActivity() {
 
     }
 
-    fun test(response: JSONObject) {
+    fun test(response: JSONObject, objects: List<Post>) {
         var jsonarray: JSONArray
         var jobject: JSONObject
         var jsonobject: JSONObject = JSONObject(response.toString())
@@ -124,12 +127,8 @@ class WallActivity : AppCompatActivity() {
 
         }
 
-        //postToList()
-        //addComments("bla", "andjghajkdhgjasdhgjahsfg")
-        //addComments("bla2", "cndjghaasfsdhgjahsfg")
-        //addComments("bla3", "vnddfhdfhaaaasdhgjahsfg")
 
-        postsList.adapter = PostAdapter(this, titleList, detailList, imageList, idList, groupId)
+        postsList.adapter = PostAdapter(this, titleList, detailList, imageList, idList, groupId, objects)
         postsList.layoutManager = LinearLayoutManager(this)
         postsList.setHasFixedSize(false)
 
