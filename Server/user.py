@@ -155,6 +155,11 @@ def editProfile(newUser: RequestEditUser, currUser: RequestRegister):
         dict: empty response {}
     """
     fields = [(name, value) for (name, value) in newUser.dict().items() if value is not None]
+    for i, f in enumerate(fields):
+        if f[0] == 'password':
+            fields[i] = ('password', hashPassword(fields[i][1]))
+            break
+    print(fields)
     query = f'''
         UPDATE users 
         SET {", ".join(f'{f[0]} = "{f[1]}"' for f in fields)}
