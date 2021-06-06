@@ -25,6 +25,7 @@ class Post(BaseModel):
     author_username: str
     likes: int
     author_liked: bool
+    author_avatar: Optional[bytes] = None
 
 class Comment(BaseModel):
     comment_id: int

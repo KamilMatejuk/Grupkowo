@@ -27,7 +27,7 @@ def getPosts(group_id: int, user: RequestRegister, start=None, end=None):
     checkGroupAccess(user, group_id)
     # post data
     query = f'''
-        SELECT posts.post_id, posts.created, posts.text, posts.author_id, users.username
+        SELECT posts.post_id, posts.created, posts.text, posts.author_id, users.username, users.avatar
         FROM posts INNER JOIN users ON posts.author_id = users.user_id
         WHERE group_id == {group_id}
         '''
@@ -38,7 +38,7 @@ def getPosts(group_id: int, user: RequestRegister, start=None, end=None):
         end_seconds = math.floor((end_date - datetime(1970, 1, 1)).total_seconds())
         start, end = min(start_seconds, end_seconds), max(start_seconds, end_seconds)
         query += f' AND created > {start} AND created < {end}'
-    correct = executeQuery(query, objectKeys=['post_id', 'created', 'text', 'author_id', 'author_username'])
+    correct = executeQuery(query, objectKeys=['post_id', 'created', 'text', 'author_id', 'author_username', 'author_avatar'])
     if isinstance(correct, bool) and not correct:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

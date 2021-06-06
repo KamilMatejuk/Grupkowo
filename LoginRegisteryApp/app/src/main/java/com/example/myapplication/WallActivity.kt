@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.RecyclerAdapters.PostAdapter
@@ -26,16 +27,14 @@ class WallActivity : AppCompatActivity() {
         const val TAG: String = "WallActivity"
     }
 
-    private var titleList = mutableListOf<String>()
-    private var detailList = mutableListOf<String>()
-    private var imageList = mutableListOf<Int>()
-    private var usernames = mutableListOf<String>()
-    private var comments = mutableListOf<String>()
-    private var idList = mutableListOf<String>()
-
-    private var title: String = ""
-    private var detail: String = ""
-    private var id: String = ""
+//    private var titleList = mutableListOf<String>()
+//    private var detailList = mutableListOf<String>()
+//    private var imageList = mutableListOf<String>()
+//    private var idList = mutableListOf<String>()
+//
+//    private var title: String = ""
+//    private var detail: String = ""
+//    private var id: String = ""
 
     var groupId: Int = 0
     var admin: Boolean = false
@@ -46,6 +45,10 @@ class WallActivity : AppCompatActivity() {
         setContentView(R.layout.activity_wall)
         groupId = intent.getIntExtra("groupId", 0)
         admin = intent.getBooleanExtra("admin", false)
+
+        val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            reloadPosts()
+        }
 
         // move to chat
         messenger_button.setOnClickListener {
@@ -58,7 +61,7 @@ class WallActivity : AppCompatActivity() {
         make_post_button.setOnClickListener {
             val intent = Intent(this, PostCreationActivity::class.java)
             intent.putExtra("groupId", groupId)
-            startActivity(intent)
+            resultLauncher.launch(intent)
         }
 
         if (admin) {
@@ -90,16 +93,19 @@ class WallActivity : AppCompatActivity() {
             delete.visibility = View.GONE
             delete.isClickable = false
         }
+        reloadPosts()
+    }
 
+    private fun reloadPosts() {
         getPosts(applicationContext, groupId,
             functionCorrect = { response ->
                 run {
                     // your code here if successful
                     val list = response.get("posts").toString()
                     val objects: List<Post> = GsonBuilder().create().fromJson(list, Array<Post>::class.java).toList()
-                    test(response,objects)
-
-
+                    postsList.adapter = PostAdapter(this, groupId, objects)
+                    postsList.layoutManager = LinearLayoutManager(this)
+                    postsList.setHasFixedSize(false)
                 }
             },
             functionError = { errorMessage ->
@@ -108,37 +114,36 @@ class WallActivity : AppCompatActivity() {
                 }
             })
 
-
     }
 
-    fun test(response: JSONObject, objects: List<Post>) {
-        var jsonarray: JSONArray
-        var jobject: JSONObject
-        var jsonobject: JSONObject = JSONObject(response.toString())
-        jsonarray = jsonobject.getJSONArray("posts")
+//    fun test(response: JSONObject, objects: List<Post>) {
+//        var jsonarray: JSONArray
+//        var jobject: JSONObject
+//        var jsonobject: JSONObject = JSONObject(response.toString())
+//        jsonarray = jsonobject.getJSONArray("posts")
+//
+//        for (i in 0 until jsonarray.length()) {
+//            jobject = jsonarray.getJSONObject(i)
+//            title = jobject.getString("author_username")
+//            detail = jobject.getString("text")
+//            id = jobject.getString("post_id")
+//            idList.add(id)
+//            addToList(title, detail, R.mipmap.ic_launcher)
+//
+//        }
+//
+//
+//        postsList.adapter = PostAdapter(this, titleList, detailList, imageList, idList, groupId, objects)
+//        postsList.layoutManager = LinearLayoutManager(this)
+//        postsList.setHasFixedSize(false)
+//
+//    }
 
-        for (i in 0 until jsonarray.length()) {
-            jobject = jsonarray.getJSONObject(i)
-            title = jobject.getString("author_username")
-            detail = jobject.getString("text")
-            id = jobject.getString("post_id")
-            idList.add(id)
-            addToList(title, detail, R.mipmap.ic_launcher)
-
-        }
-
-
-        postsList.adapter = PostAdapter(this, titleList, detailList, imageList, idList, groupId, objects)
-        postsList.layoutManager = LinearLayoutManager(this)
-        postsList.setHasFixedSize(false)
-
-    }
-
-    private fun addToList(title: String, detail: String, image: Int ){
-        titleList.add(title)
-        detailList.add(detail)
-        imageList.add(image)
-    }
+//    private fun addToList(title: String, detail: String, image: String ){
+//        titleList.add(title)
+//        detailList.add(detail)
+//        imageList.add(image)
+//    }
 
 //    private fun addComments(username: String, comment: String) {
 //        usernames.add(username)

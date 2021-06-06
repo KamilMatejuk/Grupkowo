@@ -8,4 +8,5 @@ data class Post (
     var author_username: String,
     var likes: Int,
     var author_liked: Boolean,
+    var author_avatar: String?
 )

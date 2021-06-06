@@ -83,7 +83,7 @@ def createGroup(group: RequestCreateGroup, user: RequestRegister):
     if (group.image is not None):
         cols.append('image')
         vals.append(f'"{group.image}"')
-    
+
     correct = insert('groups', cols, vals)
     if isinstance(correct, bool) and not correct:
         raise HTTPException(
