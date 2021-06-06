@@ -3,11 +3,13 @@ package com.example.myapplication
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.RecyclerAdapters.PostAdapter
 import com.example.myapplication.RecyclerItems.Post
+import com.example.myapplication.ServerConnection.GroupRequests
 import com.example.myapplication.ServerConnection.PostRequests.getPosts
 import com.example.myapplication.ServerConnection.PostRequests.addPost
 import com.example.myapplication.ServerConnection.GroupRequests.addUserToGroup
@@ -42,46 +44,80 @@ class WallActivity : AppCompatActivity() {
     private var id: String = ""
 
     var groupId: Int = 0
+    var admin: Boolean = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_wall)
         groupId = intent.getIntExtra("groupId", 0)
+        admin = intent.getBooleanExtra("admin", false)
 
+        // move to chat
         messenger_button.setOnClickListener {
             val intent = Intent(this, MessagesActivity::class.java)
             intent.putExtra("groupId", groupId)
             startActivity(intent)
         }
 
+        // add post
         make_post_button.setOnClickListener {
             val intent = Intent(this, PostCreationActivity::class.java)
             intent.putExtra("groupId", groupId)
             startActivity(intent)
         }
 
+        if (admin) {
+            // add / delete users
+            users.setOnClickListener {
+                val intent = Intent(this, AddUsersActivity::class.java)
+                intent.putExtra("groupId", groupId)
+                startActivity(intent)
+            }
+
+            // delete group
+            delete.setOnClickListener {
+                GroupRequests.deleteGroup(applicationContext, groupId,
+                    functionCorrect = {
+                        run {
+                            Toast.makeText(this, "Usunięto grupę", Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
+                    }, functionError = {
+                        run {
+                            Toast.makeText(this, "Nie można usunąć grupy", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    })
+            }
+        } else {
+            users.visibility = View.GONE
+            users.isClickable = false
+            delete.visibility = View.GONE
+            delete.isClickable = false
+        }
+
         //recyclerView adapter
 
-       /* addPost(applicationContext,14,"PIERWSZY POST W MOJEJ GRUPIE",
-            functionCorrect = { response ->
-                run {
-                    // your code here if successful
-                    //Log.d("abbsbsbsbs", response.toString())
-                    //val data = Json.decodeFromString<Post>(response.toString())
-                    //Log.d("abbsbsbsbasasass", data.toString())
-                    Log.d("super", "dodano post")
+        /* addPost(applicationContext,14,"PIERWSZY POST W MOJEJ GRUPIE",
+             functionCorrect = { response ->
+                 run {
+                     // your code here if successful
+                     //Log.d("abbsbsbsbs", response.toString())
+                     //val data = Json.decodeFromString<Post>(response.toString())
+                     //Log.d("abbsbsbsbasasass", data.toString())
+                     Log.d("super", "dodano post")
 
-                }
-            },
-            functionError = { errorMessage ->
-                run {
-                    Log.d("bladdodania", errorMessage)
-                }
-            })
+                 }
+             },
+             functionError = { errorMessage ->
+                 run {
+                     Log.d("bladdodania", errorMessage)
+                 }
+             })
 
 
-        */
+         */
 
 
         // NA SZTYWNO WPISANY GROUPID 14 ZEBY MOC PRZETESTOWAC CZY DZIALA POBIERANIE POSTOW
@@ -89,13 +125,12 @@ class WallActivity : AppCompatActivity() {
         // I WEJSC W DODANIE GRUPY POKI NIE MOZNA WYBRAC GRUP DO KTORYCH SIE NALEZY
 
 //        val groupId = intent.getIntExtra("groupId", 0)
-        getPosts(applicationContext, groupId,"","",
+        getPosts(applicationContext, groupId, "", "",
             functionCorrect = { response ->
                 run {
                     // your code here if successful
 
                     test(response)
-
 
 
                 }
@@ -107,11 +142,9 @@ class WallActivity : AppCompatActivity() {
             })
 
 
-
-
     }
 
-    fun test(response: JSONObject){
+    fun test(response: JSONObject) {
         var jsonarray: JSONArray
         var jobject: JSONObject
         var jsonobject: JSONObject = JSONObject(response.toString())
@@ -123,7 +156,7 @@ class WallActivity : AppCompatActivity() {
             detail = jobject.getString("text")
             id = jobject.getString("author_id")
             idList.add(id)
-            addToList(title,detail,R.mipmap.ic_launcher)
+            addToList(title, detail, R.mipmap.ic_launcher)
 
         }
 
@@ -132,26 +165,31 @@ class WallActivity : AppCompatActivity() {
         addComments("bla2", "cndjghaasfsdhgjahsfg")
         addComments("bla3", "vnddfhdfhaaaasdhgjahsfg")
 
-        postsList.adapter = PostAdapter(this, titleList2, detailList2, imageList2, usernames, comments)
+        postsList.adapter =
+            PostAdapter(this, titleList2, detailList2, imageList2, usernames, comments)
         postsList.layoutManager = LinearLayoutManager(this)
         postsList.setHasFixedSize(false)
 
     }
 
-    private fun addToList(title: String, detail: String, image: Int ){
+    private fun addToList(title: String, detail: String, image: Int) {
         titleList2.add(title)
         detailList2.add(detail)
         imageList2.add(image)
     }
 
-    private fun addComments(username: String, comment: String){
+    private fun addComments(username: String, comment: String) {
         usernames.add(username)
         comments.add(comment)
     }
 
-    private fun postToList(){
+    private fun postToList() {
         for (i in 1..20) {
-            addToList("Title $i", "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\"", R.mipmap.ic_launcher)
+            addToList(
+                "Title $i",
+                "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\"",
+                R.mipmap.ic_launcher
+            )
         }
     }
 }

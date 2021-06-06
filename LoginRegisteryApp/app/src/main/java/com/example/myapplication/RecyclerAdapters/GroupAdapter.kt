@@ -11,9 +11,10 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.RecyclerItems.Group
+import com.example.myapplication.Server
 import com.example.myapplication.WallActivity
 
-class GroupAdapter(private var context: Context, private var groups: List<Group>): RecyclerView.Adapter<GroupAdapter.ViewHolder>() {
+class GroupAdapter(private var context: Context, private var groups: List<Group>, private var admin: Boolean): RecyclerView.Adapter<GroupAdapter.ViewHolder>() {
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         var groupName: TextView = itemView.findViewById(R.id.groupName)
         var groupImage: ImageView = itemView.findViewById(R.id.groupPhoto)
@@ -21,13 +22,9 @@ class GroupAdapter(private var context: Context, private var groups: List<Group>
         init{
             itemView.setOnClickListener { v: View ->
                 val position: Int = adapterPosition
-                Toast.makeText(
-                    itemView.context,
-                    "You clicked on item: ${position + 1}, group pos: ${groups[position].groupId}",
-                    Toast.LENGTH_SHORT
-                ).show()
                 val intent = Intent(context, WallActivity::class.java)
-                intent.putExtra("groupId", groups[position].groupId)
+                intent.putExtra("groupId", groups[position].group_id)
+                intent.putExtra("admin", admin)
                 context.startActivity(intent)
             }
         }
@@ -43,7 +40,12 @@ class GroupAdapter(private var context: Context, private var groups: List<Group>
     }
 
     override fun onBindViewHolder(holder: GroupAdapter.ViewHolder, position: Int) {
-        holder.groupImage.setImageResource(R.mipmap.ic_launcher)
-        holder.groupName.text = groups[position].groupName
+        if (groups[position].image != null && groups[position].image != "") {
+            val bitmap = Server.convertBytesToImg(groups[position].image!!)
+            if (bitmap != null) {
+                holder.groupImage.setImageBitmap(bitmap)
+            }
+        }
+        holder.groupName.text = groups[position].name
     }
 }

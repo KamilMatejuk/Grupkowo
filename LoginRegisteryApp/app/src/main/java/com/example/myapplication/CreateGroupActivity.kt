@@ -8,13 +8,19 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.myapplication.RecyclerAdapters.UsersAdapter
+import com.example.myapplication.RecyclerItems.Message
+import com.example.myapplication.RecyclerItems.User
 import com.example.myapplication.ServerConnection.UserRequests
 import com.example.myapplication.databinding.ActivityCreateGroupBinding
+import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.activity_create_group.*
 import java.io.File
 
-class CreateGroupActivity: AppCompatActivity() {
+class CreateGroupActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCreateGroupBinding
+    private lateinit var adapter: UsersAdapter
     private var photoUri: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,40 +31,27 @@ class CreateGroupActivity: AppCompatActivity() {
     }
 
     fun createGroup(view: View) {
-        if (photoUri != null) {
-            UserRequests.createGroup(applicationContext,
-                binding.myGroupName.text.toString(),
-                imagePath = photoUri!!,
-                functionCorrect = { response ->
-                    run {
-                        Toast.makeText(this, "Dodano Grupke!", Toast.LENGTH_LONG).show()
-                    }
-                },
-                functionError = { errorMessage ->
-                    run {
-                        Log.d(
-                            AccountActivity::class.java.name,
-                            "Couldn't add group: $errorMessage"
-                        )
-                    }
-                })
-        } else {
-            UserRequests.createGroup(applicationContext,
-                binding.myGroupName.text.toString(),
-                functionCorrect = { response ->
-                    run {
-                        Toast.makeText(this, "Dodano Grupke!", Toast.LENGTH_LONG).show()
-                    }
-                },
-                functionError = { errorMessage ->
-                    run {
-                        Log.d(
-                            AccountActivity::class.java.name,
-                            "Couldn't add group: $errorMessage"
-                        )
-                    }
-                })
+        val name = binding.myGroupName.text.toString().trim()
+        if (name.isEmpty()) {
+            Toast.makeText(this, "Podaj nazwę", Toast.LENGTH_SHORT).show()
+            return
         }
+        UserRequests.createGroup(applicationContext,
+            groupName = name,
+            imagePath = photoUri!!,
+            functionCorrect = {
+                run {
+                    Toast.makeText(this, "Dodano Grupke!", Toast.LENGTH_LONG).show()
+                }
+            },
+            functionError = { errorMessage ->
+                run {
+                    Log.d(
+                        AccountActivity::class.java.name,
+                        "Couldn't add group: $errorMessage"
+                    )
+                }
+            })
 
         val intent = Intent(this, WallActivity::class.java)
         startActivity(intent)

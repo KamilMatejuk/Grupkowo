@@ -47,11 +47,19 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/textView6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Moje Grupki"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display2" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/groupListAdmin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginRight="12dp" />
 
         <View
             android:id="@+id/divider2"
@@ -61,10 +69,16 @@
             android:layout_marginBottom="16dp"
             android:background="?android:attr/listDivider" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Grupki do których należę"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/groupList"
+            android:id="@+id/groupListMember"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginLeft="12dp"
             android:layout_marginEnd="12dp"

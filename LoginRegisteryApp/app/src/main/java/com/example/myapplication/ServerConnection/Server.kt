@@ -205,7 +205,7 @@ object Server {
         val sharedPrefsKey = context.getString(R.string.shared_prefs)
         val tokenKey = context.getString(R.string.saved_token_key)
         val sharedPref = context.getSharedPreferences(sharedPrefsKey, Context.MODE_PRIVATE)
-        with (sharedPref.edit()) {
+        with(sharedPref.edit()) {
             putString(tokenKey, token)
             apply()
         }
@@ -237,7 +237,7 @@ object Server {
         val sharedPrefsKey = context.getString(R.string.shared_prefs)
         val tokenKey = context.getString(R.string.saved_token_key)
         val sharedPref = context.getSharedPreferences(sharedPrefsKey, Context.MODE_PRIVATE)
-        with (sharedPref.edit()) {
+        with(sharedPref.edit()) {
             remove(tokenKey)
             apply()
         }
@@ -268,7 +268,11 @@ object Server {
     }
 
     fun convertBytesToImg(bytes: String): Bitmap? {
-        val imageBytes = Base64.decode(bytes, Base64.DEFAULT)
-        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+        return try {
+            val imageBytes = Base64.decode(bytes.replace("b'", ""), Base64.DEFAULT)
+            BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+        } catch (e: Exception) {
+            null
+        }
     }
 }

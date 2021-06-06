@@ -4,6 +4,7 @@
     package="com.example.myapplication">
 
     <uses-feature android:name="android.hardware.camera.any" />
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -16,6 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
         android:usesCleartextTraffic="true">
+        <activity android:name=".AddUsersActivity"></activity>
         <activity android:name=".RegisterActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,13 +25,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity"/>
-        <activity android:name=".WallActivity"/>
-        <activity android:name=".GroupsActivity"/>
-        <activity android:name=".AccountActivity"/>
-        <activity android:name=".CreateGroupActivity"/>
-        <activity android:name=".PostCreationActivity"/>
-        <activity android:name=".MessagesActivity"/>
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".WallActivity" />
+        <activity android:name=".GroupsActivity" />
+        <activity android:name=".AccountActivity" />
+        <activity android:name=".CreateGroupActivity" />
+        <activity android:name=".PostCreationActivity" />
+        <activity android:name=".MessagesActivity" />
         <activity android:name=".CameraActivity" />
         <activity android:name=".CommentActivity" />
 

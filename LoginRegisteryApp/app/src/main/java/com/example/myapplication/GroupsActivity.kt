@@ -8,11 +8,15 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.RecyclerAdapters.GroupAdapter
+import com.example.myapplication.RecyclerAdapters.MessageAdapter
 import com.example.myapplication.RecyclerItems.Group
+import com.example.myapplication.RecyclerItems.Message
 import com.example.myapplication.RecyclerItems.Post
 import com.example.myapplication.ServerConnection.UserRequests
 import com.example.myapplication.databinding.ActivityGroupsBinding
+import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.activity_groups.*
 import kotlinx.android.synthetic.main.activity_wall.*
 //import kotlinx.serialization.decodeFromString
@@ -22,7 +26,7 @@ import org.json.JSONObject
 import java.util.*
 import kotlin.reflect.typeOf
 
-class GroupsActivity: AppCompatActivity() {
+class GroupsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityGroupsBinding
     private lateinit var groups: MutableList<Group>
 
@@ -46,60 +50,45 @@ class GroupsActivity: AppCompatActivity() {
     }
 
     fun generateGroupRecycler() {
-        groups = mutableListOf()
-        UserRequests.getUserGroupsMember(applicationContext,
+        loadGroupsAdmin()
+        // detect end of recycler and reload
+        findViewById<RecyclerView>(R.id.groupListAdmin).addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (!recyclerView.canScrollVertically(1)) {
+                    loadGroupsAdmin()
+                }
+            }
+        })
+
+        loadGroupsMember()
+        // detect end of recycler and reload
+        findViewById<RecyclerView>(R.id.groupListMember).addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (!recyclerView.canScrollVertically(1)) {
+                    loadGroupsMember()
+                }
+            }
+        })
+    }
+
+    fun loadGroupsAdmin() {
+        UserRequests.getUserGroupsAdmin(applicationContext,
             functionCorrect = { response ->
                 run {
-                    Toast.makeText(
-                        this,
-                        "Successfully got groups",
-                        Toast.LENGTH_LONG
-                    ).show()
-                    Log.d(GroupsActivity::class.java.name, "MAKER\n\n\n\n")
-                    Log.d(GroupsActivity::class.java.name, "DATA: ${response.toString()}")
-
-                    jsonToObjects(response)
-
-                    UserRequests.getUserGroupsAdmin(applicationContext,
-                        functionCorrect = { response2 ->
-                            run {
-                                Toast.makeText(
-                                    this,
-                                    "Successfully got groups",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                Log.d(GroupsActivity::class.java.name, "MAKER\n\n\n\n")
-                                Log.d(GroupsActivity::class.java.name, "DATA: ${response2.toString()}")
-
-                                jsonToObjects(response2)
-
-                                binding.groupList.adapter = GroupAdapter(this, groups)
-                                binding.groupList.layoutManager = LinearLayoutManager(this)
-                                binding.groupList.setHasFixedSize(false)
-                            }
-                        },
-                        functionError = { errorMessage ->
-                            run {
-                                Toast.makeText(
-                                    this,
-                                    "Couldn't get groups",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                Log.d(
-                                    GroupsActivity::class.java.name,
-                                    "Couldn't get groups: $errorMessage"
-                                )
-                            }
-                        })
+                    // convert into a list of objects
+                    val list = response.get("groups").toString()
+                    val objects: List<Group> =
+                        GsonBuilder().create().fromJson(list, Array<Group>::class.java).toList()
+                    // set recycler
+                    val recycler = findViewById<RecyclerView>(R.id.groupListAdmin)
+                    recycler.adapter = GroupAdapter(this, objects, true)
+                    recycler.layoutManager = LinearLayoutManager(this)
                 }
             },
             functionError = { errorMessage ->
                 run {
-                    Toast.makeText(
-                        this,
-                        "Couldn't get groups",
-                        Toast.LENGTH_LONG
-                    ).show()
                     Log.d(
                         GroupsActivity::class.java.name,
                         "Couldn't get groups: $errorMessage"
@@ -108,20 +97,27 @@ class GroupsActivity: AppCompatActivity() {
             })
     }
 
-    fun jsonToObjects(response: JSONObject) {
-        val jsonarray: JSONArray
-        var jobject: JSONObject
-        val jsonobject: JSONObject = JSONObject(response.toString())
-        jsonarray = jsonobject.getJSONArray("groups")
-
-        for (i in 0 until jsonarray.length()) {
-            jobject = jsonarray.getJSONObject(i)
-            val name = jobject.getString("name")
-            val id = jobject.getString("group_id").toInt()
-            val photo = R.mipmap.ic_launcher
-
-            groups.add(Group(id = id, photo = photo, name = name))
-        }
-
+    fun loadGroupsMember() {
+        UserRequests.getUserGroupsMember(applicationContext,
+            functionCorrect = { response ->
+                run {
+                    // convert into a list of objects
+                    val list = response.get("groups").toString()
+                    val objects: List<Group> =
+                        GsonBuilder().create().fromJson(list, Array<Group>::class.java).toList()
+                    // set recycler
+                    val recycler = findViewById<RecyclerView>(R.id.groupListMember)
+                    recycler.adapter = GroupAdapter(this, objects, false)
+                    recycler.layoutManager = LinearLayoutManager(this)
+                }
+            },
+            functionError = { errorMessage ->
+                run {
+                    Log.d(
+                        GroupsActivity::class.java.name,
+                        "Couldn't get groups: $errorMessage"
+                    )
+                }
+            })
     }
 }
