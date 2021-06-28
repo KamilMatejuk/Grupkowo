@@ -13,12 +13,14 @@ Projekt na aplikacje mobilne. Uzytkownicy mają dostęp do grup, w których mog�
 
 ## Klient
 Aplikacja mobilna na system Android 11 (API 30+), napisana w języku kotlin.
+![](README_imgs/screens.png)
 
 ## Serwer
-Napisany w pythonie, z wykorzystaniem [FastAPI](https://fastapi.tiangolo.com/).
-Rozpis end-pointów można znaleźć wewnątrz folderu `Server`.
-Server jest deployowany poprzez serwis [Deta](https://fastapi.tiangolo.com/deployment/deta/), dostepny [tutaj](https://3eivij.deta.dev/).
+Napisany w pythonie, z wykorzystaniem [FastAPI](https://fastapi.tiangolo.com/).<br/>
+Server był postawiony na własnym serverze, aktualnie nie uruchomionym. Do testów można uruchomić go na własnej maszynie na `localhost` ([instrukcja](Server/README.md)).<br/>
+Więcej informacji wewnątrz folderu `Server`.
+![](README_imgs/endpoints.png)
 
 ## Baza Danych
-Relacyjna baza danych MySQL, wykorzystując połączenie `sqlite3` o poniższym schemacie:
+Relacyjna baza danych MySQL o poniższym schemacie, połączenie wykorzystując moduł `sqlite3` w pythonie:
 ![](README_imgs/database_schema.png)
